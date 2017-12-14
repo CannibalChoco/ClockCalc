@@ -35,7 +35,7 @@
                 app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
-                android:id="@+id/surceTimeZoneId"
+                android:id="@+id/sourceTimeZoneId"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
@@ -52,7 +52,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
-                app:layout_constraintBaseline_toBaselineOf="@+id/surceTimeZoneId"
+                app:layout_constraintBaseline_toBaselineOf="@+id/sourceTimeZoneId"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/destBackground"
                 tools:text="Europe/Prague" />
@@ -118,7 +118,7 @@
                 android:textSize="12sp"
                 app:layout_constraintEnd_toStartOf="@+id/destBackground"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/surceTimeZoneId"
+                app:layout_constraintTop_toBottomOf="@+id/sourceTimeZoneId"
                 tools:text="GMT+02:00" />
 
             <TextView
