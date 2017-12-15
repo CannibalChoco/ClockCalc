@@ -1,9 +1,11 @@
 package com.example.android.clockcalc;
 
 import android.databinding.DataBindingUtil;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 
 import com.example.android.clockcalc.databinding.ActivityMainBinding;
 
@@ -123,6 +125,11 @@ public class MainActivity extends AppCompatActivity {
      * display name:        GMT+02:00
      *
      */
+
+    public void showTimePickerDialog(View v) {
+        DialogFragment newFragment = new TimePickerFragment();
+        newFragment.show(getSupportFragmentManager(), "timePicker");
+    }
 
     private void logTimeZoneInfo (){
 
