@@ -50,17 +50,8 @@ public class TimePickerFragment extends DialogFragment
 
     @Override
     public void onTimeSet(TimePicker view, int hour, int minute) {
-        String time = String.valueOf(hour) + ":" +
-                String.valueOf(minute);
+        String time = String.format("%02d:%02d", hour, minute);
 
-        SimpleDateFormat sdf = new SimpleDateFormat("hh:mm");
-        try {
-            Date date = sdf.parse(time);
-            String formattedTime = sdf.format(date);
-            listener.timeSet(formattedTime);
-            Log.i("INFO", "onTimeSet: " + formattedTime);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+        listener.timeSet(time);
     }
 }
