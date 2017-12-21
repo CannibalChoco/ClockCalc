@@ -8,11 +8,8 @@ import android.text.format.DateFormat;
 import android.util.Log;
 import android.widget.TimePicker;
 
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
+import java.util.Locale;
 
 /**
  * Created by Emils on 15.12.2017.
@@ -50,7 +47,8 @@ public class TimePickerFragment extends DialogFragment
 
     @Override
     public void onTimeSet(TimePicker view, int hour, int minute) {
-        String time = String.format("%02d:%02d", hour, minute);
+        Locale locale = Locale.getDefault();
+        String time = String.format(locale, "%02d:%02d", hour, minute);
 
         listener.timeSet(time);
     }
