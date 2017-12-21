@@ -1,5 +1,7 @@
 package com.example.android.clockcalc;
 
+
+import android.app.TimePickerDialog;
 import android.databinding.DataBindingUtil;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
@@ -15,7 +17,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements
+                                                DatePickerFragment.DialogDateListener,
+                                                TimePickerFragment.DialogTimeListener{
 
     private static final String DEFAULT_DATETIME_FORMAT = "dd/MM/yyyy HH:mm";
 
@@ -127,13 +131,15 @@ public class MainActivity extends AppCompatActivity {
      */
 
     public void showTimePickerDialog(View v) {
-        DialogFragment newFragment = new TimePickerFragment();
-        newFragment.show(getSupportFragmentManager(), "timePicker");
+        TimePickerFragment timePicker = new TimePickerFragment();
+        timePicker.show(getSupportFragmentManager(), "timePicker");
+        timePicker.setTimeListener(this);
     }
 
     public void showDatePickerDialog(View v) {
-        DialogFragment newFragment = new DatePickerFragment();
-        newFragment.show(getSupportFragmentManager(), "datePicker");
+        DatePickerFragment datePicker = new DatePickerFragment();
+        datePicker.show(getSupportFragmentManager(), "datePicker");
+        datePicker.setDateListener(this);
     }
 
     private void logTimeZoneInfo (){
@@ -163,4 +169,13 @@ public class MainActivity extends AppCompatActivity {
         Log.v("INFO", "DEST TIME ZONE DISPLAY NAME: " + destTimeZoneDisplayName);
     }
 
+    @Override
+    public void dateSet(String date) {
+        mBinding.sourceDate.setText(date);
+    }
+
+    @Override
+    public void timeSet(String time) {
+        mBinding.sourceTime.setText(time);
+    }
 }
