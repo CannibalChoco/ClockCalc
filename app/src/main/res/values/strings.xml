@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">ClockCalc</string>
+    <string name="convertTimeLabel">Convert</string>
 </resources>

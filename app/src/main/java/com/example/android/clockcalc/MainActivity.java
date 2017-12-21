@@ -129,7 +129,6 @@ public class MainActivity extends AppCompatActivity implements
      * display name:        GMT+02:00
      *
      */
-
     public void showTimePickerDialog(View v) {
         TimePickerFragment timePicker = new TimePickerFragment();
         timePicker.show(getSupportFragmentManager(), "timePicker");
@@ -140,6 +139,13 @@ public class MainActivity extends AppCompatActivity implements
         DatePickerFragment datePicker = new DatePickerFragment();
         datePicker.show(getSupportFragmentManager(), "datePicker");
         datePicker.setDateListener(this);
+    }
+
+    public void convertCustomTime(View v){
+        String sourceTime = String.valueOf(mBinding.sourceTime.getText());
+        String sourceDate = String.valueOf(mBinding.sourceDate.getText());
+
+        setDestDateTimeInUi(getDestinationDate(sourceDate + " " + sourceTime));
     }
 
     private void logTimeZoneInfo (){

@@ -9,8 +9,10 @@ import android.util.Log;
 import android.widget.TimePicker;
 
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Created by Emils on 15.12.2017.
@@ -49,10 +51,16 @@ public class TimePickerFragment extends DialogFragment
     @Override
     public void onTimeSet(TimePicker view, int hour, int minute) {
         String time = String.valueOf(hour) + ":" +
-                        String.valueOf(minute);
+                String.valueOf(minute);
 
-        listener.timeSet(time);
-
-        Log.i("INFO", "onTimeSet: " + time);
+        SimpleDateFormat sdf = new SimpleDateFormat("hh:mm");
+        try {
+            Date date = sdf.parse(time);
+            String formattedTime = sdf.format(date);
+            listener.timeSet(formattedTime);
+            Log.i("INFO", "onTimeSet: " + formattedTime);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
     }
 }
