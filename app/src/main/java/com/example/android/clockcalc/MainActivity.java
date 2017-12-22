@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.Toast;
 
 import com.example.android.clockcalc.databinding.ActivityMainBinding;
 
@@ -51,6 +52,8 @@ public class MainActivity extends AppCompatActivity implements
         String localDateTime = getLocalDateTime();
         setLocalDateTimeInUi(localDateTime);
         setDestDateTimeInUi(getDestinationDate(localDateTime));
+
+        logTimeZoneInfo();
     }
 
     /**
@@ -139,6 +142,11 @@ public class MainActivity extends AppCompatActivity implements
         datePicker.setDateListener(this);
     }
 
+    public void showTimeZonePickerDialog(View v) {
+        TimeZonePickerFragment timeZonePicker = new TimeZonePickerFragment();
+        timeZonePicker.show(getSupportFragmentManager(), "timeZonePicker");
+    }
+
     public void convertCustomTime(View v){
         String sourceTime = String.valueOf(mBinding.sourceTime.getText());
         String sourceDate = String.valueOf(mBinding.sourceDate.getText());
@@ -171,6 +179,21 @@ public class MainActivity extends AppCompatActivity implements
         Log.v("INFO", "DEST TIME ZONE: " + destTimeZone.toString());
         Log.v("INFO", "DEST TIME ZONE ID: " + destTimeZoneId);
         Log.v("INFO", "DEST TIME ZONE DISPLAY NAME: " + destTimeZoneDisplayName);
+
+
+        /******************
+         * All time zones *
+         ******************/
+
+        String[] allTimeZones = getAllTimeZones();
+        for (String zone : allTimeZones){
+            Log.v("INFO", "_ZONE: " + zone);
+        }
+
+    }
+
+    private String[] getAllTimeZones (){
+        return TimeZone.getAvailableIDs();
     }
 
     @Override

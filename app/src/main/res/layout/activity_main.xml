@@ -44,7 +44,8 @@
                 app:layout_constraintEnd_toStartOf="@+id/destBackground"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/sourceBackground"
-                tools:text="Europe/Riga" />
+                tools:text="Europe/Riga"
+                android:onClick="showTimeZonePickerDialog"/>
 
             <TextView
                 android:id="@+id/destTimeZoneId"
@@ -123,7 +124,8 @@
                 app:layout_constraintEnd_toStartOf="@+id/destBackground"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/sourceTimeZoneId"
-                tools:text="GMT+02:00" />
+                tools:text="GMT+02:00"
+                android:onClick="showTimeZonePickerDialog"/>
 
             <TextView
                 android:id="@+id/destDisplayName"
