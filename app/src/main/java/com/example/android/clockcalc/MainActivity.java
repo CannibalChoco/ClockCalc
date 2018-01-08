@@ -32,6 +32,10 @@ public class MainActivity extends AppCompatActivity implements
 
     private ActivityMainBinding mBinding;
 
+    private View.OnClickListener timeZoneClickListener;
+    private View.OnClickListener timeClickListener;
+    private View.OnClickListener dateClickListener;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -54,6 +58,44 @@ public class MainActivity extends AppCompatActivity implements
         setDestDateTimeInUi(getDestinationDate(localDateTime));
 
         logTimeZoneInfo();
+
+        timeZoneClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showTimeZonePickerDialog(view);
+            }
+        };
+
+        timeClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showTimePickerDialog(view);
+            }
+        };
+
+        dateClickListener = new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showDatePickerDialog(view);
+            }
+        };
+
+        setAllClickListeners();
+
+    }
+
+    private void setAllClickListeners (){
+        // Time zones
+        mBinding.sourceTimeZoneField.setOnClickListener(timeZoneClickListener);
+        mBinding.destTimeZoneField.setOnClickListener(timeZoneClickListener);
+
+        // time
+        mBinding.sourceTime.setOnClickListener(timeClickListener);
+        mBinding.destTime.setOnClickListener(timeClickListener);
+
+        // date
+        mBinding.sourceDate.setOnClickListener(dateClickListener);
+        mBinding.destDate.setOnClickListener(dateClickListener);
     }
 
     /**

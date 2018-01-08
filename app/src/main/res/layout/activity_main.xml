@@ -34,6 +34,28 @@
                 app:layout_constraintStart_toEndOf="@+id/sourceBackground"
                 app:layout_constraintTop_toTopOf="parent" />
 
+            <View
+                android:id="@+id/sourceTimeZoneField"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toTopOf="@+id/sourceTime"
+                app:layout_constraintEnd_toStartOf="@+id/destBackground"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintHorizontal_weight="1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <View
+                android:id="@+id/destTimeZoneField"
+                android:layout_width="0dp"
+                android:layout_height="0dp"
+                app:layout_constraintBottom_toTopOf="@+id/destTime"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.5"
+                app:layout_constraintHorizontal_weight="1"
+                app:layout_constraintStart_toEndOf="@+id/sourceBackground"
+                app:layout_constraintTop_toTopOf="parent" />
+
             <TextView
                 android:id="@+id/sourceTimeZoneId"
                 android:layout_width="wrap_content"
@@ -44,8 +66,7 @@
                 app:layout_constraintEnd_toStartOf="@+id/destBackground"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/sourceBackground"
-                tools:text="Europe/Riga"
-                android:onClick="showTimeZonePickerDialog"/>
+                tools:text="Europe/Riga"/>
 
             <TextView
                 android:id="@+id/destTimeZoneId"
@@ -56,8 +77,7 @@
                 app:layout_constraintBaseline_toBaselineOf="@+id/sourceTimeZoneId"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/destBackground"
-                tools:text="Europe/Prague"
-                android:onClick="showTimeZonePickerDialog" />
+                tools:text="Europe/Prague" />
 
             <TextView
                 android:id="@+id/sourceTime"
@@ -72,8 +92,7 @@
                 app:layout_constraintEnd_toStartOf="@+id/destBackground"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/sourceDisplayName"
-                tools:text="12:15"
-                android:onClick="showTimePickerDialog"/>
+                tools:text="12:15"/>
 
             <TextView
                 android:id="@+id/destTime"
@@ -95,7 +114,6 @@
                 android:layout_marginEnd="8dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="16dp"
-                android:onClick="showDatePickerDialog"
                 android:textSize="24sp"
                 app:layout_constraintEnd_toStartOf="@+id/destBackground"
                 app:layout_constraintStart_toStartOf="@+id/sourceBackground"
@@ -125,8 +143,7 @@
                 app:layout_constraintEnd_toStartOf="@+id/destBackground"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/sourceTimeZoneId"
-                tools:text="GMT+02:00"
-                android:onClick="showTimeZonePickerDialog"/>
+                tools:text="GMT+02:00"/>
 
             <TextView
                 android:id="@+id/destDisplayName"
@@ -139,8 +156,7 @@
                 app:layout_constraintBaseline_toBaselineOf="@+id/sourceDisplayName"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/destBackground"
-                tools:text="GMT+03:00"
-                android:onClick="showTimeZonePickerDialog" />
+                tools:text="GMT+03:00" />
 
             <Button
                 android:id="@+id/convertTime"
