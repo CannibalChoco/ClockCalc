@@ -16,18 +16,37 @@ public class TimeZoneAdapter extends RecyclerView.Adapter<TimeZoneAdapter.TimeZo
 
     private String[] mTimeZones;
 
+    final private TimeZoneAdapterOnClickHandler mClickHandler;
 
-    public TimeZoneAdapter(String[] timeZones){
-        mTimeZones = timeZones;
+    /**
+     * The interface that receives onClick messages.
+     */
+    public interface TimeZoneAdapterOnClickHandler {
+        void onClick(String timeZone);
     }
 
-    class TimeZoneViewHolder extends RecyclerView.ViewHolder{
+    public TimeZoneAdapter(String[] timeZones, TimeZoneAdapterOnClickHandler handler){
+        mTimeZones = timeZones;
+        mClickHandler = handler;
+    }
+
+
+    class TimeZoneViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
 
         TextView timeZone;
 
         public TimeZoneViewHolder(View itemView) {
             super(itemView);
             timeZone = itemView.findViewById(R.id.list_item);
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick (View v){
+            int position = getAdapterPosition();
+
+            String selectedTimeZone = mTimeZones[position];
+            mClickHandler.onClick(selectedTimeZone);
         }
     }
 
@@ -46,6 +65,7 @@ public class TimeZoneAdapter extends RecyclerView.Adapter<TimeZoneAdapter.TimeZo
     @Override
     public void onBindViewHolder(TimeZoneViewHolder holder, int position) {
         holder.timeZone.setText(mTimeZones[position]);
+        holder.timeZone.setTextSize(12);
     }
 
     @Override

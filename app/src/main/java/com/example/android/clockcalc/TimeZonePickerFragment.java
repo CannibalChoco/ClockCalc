@@ -16,7 +16,7 @@ import java.util.TimeZone;
  * Created by Emils on 22.12.2017.
  */
 
-public class TimeZonePickerFragment extends DialogFragment {
+public class TimeZonePickerFragment extends DialogFragment implements TimeZoneAdapter.TimeZoneAdapterOnClickHandler{
 
     RecyclerView recyclerView;
     TimeZoneAdapter adapter;
@@ -30,11 +30,16 @@ public class TimeZonePickerFragment extends DialogFragment {
         recyclerView = rootView.findViewById(R.id.recyclerView);
         recyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
 
-        adapter = new TimeZoneAdapter(TimeZone.getAvailableIDs());
+        adapter = new TimeZoneAdapter(TimeZone.getAvailableIDs(), this);
         recyclerView.setAdapter(adapter);
 
         this.getDialog();
 
         return rootView;
+    }
+
+    @Override
+    public void onClick(String selectedTimeZone) {
+        Toast.makeText(this.getContext(), selectedTimeZone, Toast.LENGTH_SHORT).show();
     }
 }

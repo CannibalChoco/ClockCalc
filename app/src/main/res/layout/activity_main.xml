@@ -56,7 +56,8 @@
                 app:layout_constraintBaseline_toBaselineOf="@+id/sourceTimeZoneId"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/destBackground"
-                tools:text="Europe/Prague" />
+                tools:text="Europe/Prague"
+                android:onClick="showTimeZonePickerDialog" />
 
             <TextView
                 android:id="@+id/sourceTime"
@@ -138,7 +139,8 @@
                 app:layout_constraintBaseline_toBaselineOf="@+id/sourceDisplayName"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="@+id/destBackground"
-                tools:text="GMT+03:00" />
+                tools:text="GMT+03:00"
+                android:onClick="showTimeZonePickerDialog" />
 
             <Button
                 android:id="@+id/convertTime"
