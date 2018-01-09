@@ -23,7 +23,7 @@ public class TimeZonePickerFragment extends DialogFragment implements TimeZoneAd
 
 
     public interface DialogTimeZoneListener{
-        void timeZoneSet(String timeZone);
+        void timeZoneSet(String timeZoneId);
     }
 
     DialogTimeZoneListener listener;
@@ -51,5 +51,6 @@ public class TimeZonePickerFragment extends DialogFragment implements TimeZoneAd
     @Override
     public void onClick(String selectedTimeZone) {
         listener.timeZoneSet(selectedTimeZone);
+        dismiss();
     }
 }
