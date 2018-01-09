@@ -20,7 +20,17 @@ public class TimeZonePickerFragment extends DialogFragment implements TimeZoneAd
 
     RecyclerView recyclerView;
     TimeZoneAdapter adapter;
-    //TimeZoneAdapter.OnClickListener mListener;
+
+
+    public interface DialogTimeZoneListener{
+        void timeZoneSet(String timeZone);
+    }
+
+    DialogTimeZoneListener listener;
+
+    public void setTimeZoneListener(DialogTimeZoneListener listener){
+        this.listener = listener;
+    }
 
     @Nullable
     @Override
@@ -40,6 +50,6 @@ public class TimeZonePickerFragment extends DialogFragment implements TimeZoneAd
 
     @Override
     public void onClick(String selectedTimeZone) {
-        Toast.makeText(this.getContext(), selectedTimeZone, Toast.LENGTH_SHORT).show();
+        listener.timeZoneSet(selectedTimeZone);
     }
 }

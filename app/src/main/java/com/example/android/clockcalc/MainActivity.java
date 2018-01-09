@@ -18,7 +18,8 @@ import java.util.TimeZone;
 
 public class MainActivity extends AppCompatActivity implements
                                                 DatePickerFragment.DialogDateListener,
-                                                TimePickerFragment.DialogTimeListener{
+                                                TimePickerFragment.DialogTimeListener,
+                                                TimeZonePickerFragment.DialogTimeZoneListener{
 
     private static final String DEFAULT_DATETIME_FORMAT = "dd/MM/yyyy HH:mm";
 
@@ -187,6 +188,7 @@ public class MainActivity extends AppCompatActivity implements
     public void showTimeZonePickerDialog(View v) {
         TimeZonePickerFragment timeZonePicker = new TimeZonePickerFragment();
         timeZonePicker.show(getSupportFragmentManager(), "timeZonePicker");
+        timeZonePicker.setTimeZoneListener(this);
     }
 
     public void convertCustomTime(View v){
@@ -248,4 +250,8 @@ public class MainActivity extends AppCompatActivity implements
         mBinding.sourceTime.setText(time);
     }
 
+    @Override
+    public void timeZoneSet(String timeZone) {
+        Toast.makeText(this, timeZone, Toast.LENGTH_SHORT).show();
+    }
 }
