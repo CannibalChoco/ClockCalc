@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
+import com.example.android.clockcalc.Utils.TimeZoneUtils;
 import com.example.android.clockcalc.databinding.ActivityMainBinding;
 
 import java.text.ParseException;
@@ -37,6 +38,7 @@ public class MainActivity extends AppCompatActivity implements
     private View.OnClickListener destTimeZoneClickListener;
     private View.OnClickListener timeClickListener;
     private View.OnClickListener dateClickListener;
+    private View.OnClickListener convertClickListener;
 
     private boolean hasChangedSourceTimeZone;
     private boolean hasChangedDestTimeZone;
@@ -61,12 +63,13 @@ public class MainActivity extends AppCompatActivity implements
         setInitialTimeZonesInUi();
         //logTimeZoneInfo();
 
-        String localDateTime = getLocalDateTime();
+        String localDateTime = TimeZoneUtils.getLocalDateTime(mDefaultFormat);
         setLocalDateTimeInUi(localDateTime);
-        setDestDateTimeInUi(getDestinationDate(localDateTime));
+        setDestDateTimeInUi(TimeZoneUtils.getDestinationDateTime(localDateTime, mDefaultFormat,
+                                                                mDestinationTimeZone));
 
-        logTimeZoneInfo();
-
+        // TODO: place hasChangedSourceTimeZone in more appropriate place;
+        // set it to true after the time zone actually has been selected
         sourceTimeZoneClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -75,6 +78,8 @@ public class MainActivity extends AppCompatActivity implements
             }
         };
 
+        // TODO: place hasChangedDestTimeZone in more appropriate place;
+        // set it to true after the time zone actually has been selected
         destTimeZoneClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -113,37 +118,6 @@ public class MainActivity extends AppCompatActivity implements
         // date
         mBinding.sourceDate.setOnClickListener(dateClickListener);
         mBinding.destDate.setOnClickListener(dateClickListener);
-    }
-
-    /**
-     * get local date and time from calendar
-     * @return formatted local datetime String
-     */
-    private String getLocalDateTime (){
-        Calendar c = Calendar.getInstance();
-        String formatted = mDefaultFormat.format(c.getTime());
-
-        return formatted;
-    }
-
-    /**
-     * Convert local time zone datetime to the destination datetime
-     * @param localDateTime local datetime String
-     * @return formatted date converted to destination time zone
-     */
-    private String getDestinationDate(String localDateTime) {
-        try {
-            Date date = mDefaultFormat.parse(localDateTime);
-            SimpleDateFormat destFormat = new SimpleDateFormat(DEFAULT_DATETIME_FORMAT);
-            destFormat.setTimeZone(mDestinationTimeZone);
-
-            return destFormat.format(date);
-
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        return null;
     }
 
     /**
@@ -203,20 +177,8 @@ public class MainActivity extends AppCompatActivity implements
 
             hasChangedDestTimeZone = false;
         }
-
-
-        //setDestDateTimeInUi(getDestinationDate(localDateTime));
     }
 
-
-    /**
-     * Helper method to try out and log different TimeZone methods
-     *
-     * time zone:           libcore.util.ZoneInfo[id="Europe/Riga",mRawOffset=7200000,mEarliestRawOffset=5794000,mUseDst=true,mDstSavings=3600000,transitions=127]
-     * ID:                  Europe/Riga
-     * display name:        GMT+02:00
-     *
-     */
     public void showTimePickerDialog(View v) {
         TimePickerFragment timePicker = new TimePickerFragment();
         timePicker.show(getSupportFragmentManager(), "timePicker");
@@ -235,53 +197,13 @@ public class MainActivity extends AppCompatActivity implements
         timeZonePicker.setTimeZoneListener(this);
     }
 
-    public void convertCustomTime(View v){
+    public void convertCustomTime(){
         String sourceTime = String.valueOf(mBinding.sourceTime.getText());
         String sourceDate = String.valueOf(mBinding.sourceDate.getText());
+        String localDateTime = sourceDate + " " + sourceTime;
 
-        setDestDateTimeInUi(getDestinationDate(sourceDate + " " + sourceTime));
-    }
-
-    private void logTimeZoneInfo (){
-
-        /*********
-         * LOCAL *
-         *********/
-        TimeZone localTimeZone = TimeZone.getDefault();
-        String localTImeZoneId = localTimeZone.getID();
-        String localTimeZoneDisplayName = TimeZone.getDefault().getDisplayName(false, TimeZone.SHORT);
-
-
-        Log.v("INFO", "LOCAL TIME ZONE: " + localTimeZone.toString());
-        Log.v("INFO", "LOCAL TIME ZONE ID: " + localTImeZoneId);
-        Log.v("INFO", "LOCAL TIME ZONE DISPLAY NAME: " + localTimeZoneDisplayName + "\n\n\n");
-
-
-        /********
-         * DEST *
-         ********/
-        TimeZone destTimeZone = TimeZone.getTimeZone(DEST_TIME_ZONE);
-        String destTimeZoneId = destTimeZone.getID();
-        String destTimeZoneDisplayName = destTimeZone.getDisplayName(false, TimeZone.SHORT);
-
-        Log.v("INFO", "DEST TIME ZONE: " + destTimeZone.toString());
-        Log.v("INFO", "DEST TIME ZONE ID: " + destTimeZoneId);
-        Log.v("INFO", "DEST TIME ZONE DISPLAY NAME: " + destTimeZoneDisplayName);
-
-
-        /******************
-         * All time zones *
-         ******************/
-
-        String[] allTimeZones = getAllTimeZones();
-        for (String zone : allTimeZones){
-            Log.v("INFO", "_ZONE: " + zone);
-        }
-
-    }
-
-    private String[] getAllTimeZones (){
-        return TimeZone.getAvailableIDs();
+        setDestDateTimeInUi(TimeZoneUtils.getDestinationDateTime(localDateTime, mDefaultFormat,
+                mDestinationTimeZone));
     }
 
     @Override
@@ -298,6 +220,6 @@ public class MainActivity extends AppCompatActivity implements
     public void timeZoneSet(String timeZoneId) {
         //Toast.makeText(this, timeZoneId, Toast.LENGTH_SHORT).show();
         setSelectedTimeZoneInUi(timeZoneId);
-
+        convertCustomTime();
     }
 }
