@@ -24,24 +24,25 @@ import java.util.TimeZone;
 public class TimeZoneUtils {
 
     /**
-     * get local date and time from calendar
-     * @return formatted local datetime String
+     * get current date and time from calendar
+     * @return formatted datetime String
      */
-    public static String getLocalDateTime (SimpleDateFormat defaultFormat){
-        Calendar c = Calendar.getInstance();
+    public static String getCurrentDateTime (TimeZone timeZone, SimpleDateFormat defaultFormat){
+        Calendar c = Calendar.getInstance(timeZone);
         String formatted = defaultFormat.format(c.getTime());
 
         return formatted;
     }
 
     /**
-     * Convert local time zone datetime to the destination datetime
-     * @param localDateTime local datetime String
+     * Get DateTime from custom time
+     * @param sourceDateTime source datetime String
      * @return formatted date converted to destination time zone
      */
-    public static String getDestinationDateTime(String localDateTime, SimpleDateFormat defaultFormat, TimeZone destinationTimeZone) {
+    public static String getDestinationDateTime(String sourceDateTime, SimpleDateFormat defaultFormat,
+                                                TimeZone destinationTimeZone) {
         try {
-            Date date = defaultFormat.parse(localDateTime);
+            Date date = defaultFormat.parse(sourceDateTime);
             SimpleDateFormat destFormat = defaultFormat;
             destFormat.setTimeZone(destinationTimeZone);
 

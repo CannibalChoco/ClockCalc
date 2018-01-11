@@ -27,7 +27,9 @@ public class MainActivity extends AppCompatActivity implements
     // placeholder destination time zone
     private static final String DEST_TIME_ZONE = "Africa/El_Aaiun";
 
-    private SimpleDateFormat mDefaultFormat;
+    //private SimpleDateFormat mDefaultFormat;
+    private SimpleDateFormat mSourceFormat;
+    private SimpleDateFormat mDestinationFormat;
 
     private TimeZone mSourceTimeZone;
     private TimeZone mDestinationTimeZone;
@@ -38,7 +40,6 @@ public class MainActivity extends AppCompatActivity implements
     private View.OnClickListener destTimeZoneClickListener;
     private View.OnClickListener timeClickListener;
     private View.OnClickListener dateClickListener;
-    private View.OnClickListener convertClickListener;
 
     private boolean hasChangedSourceTimeZone;
     private boolean hasChangedDestTimeZone;
@@ -52,22 +53,24 @@ public class MainActivity extends AppCompatActivity implements
         hasChangedSourceTimeZone = false;
 
         // simple format for the default time
-        mDefaultFormat = new SimpleDateFormat(DEFAULT_DATETIME_FORMAT);
+        mSourceFormat = new SimpleDateFormat(DEFAULT_DATETIME_FORMAT);
+        mDestinationFormat = new SimpleDateFormat(DEFAULT_DATETIME_FORMAT);
 
         // local time zone
         mSourceTimeZone = TimeZone.getDefault();
         // placeholder time zone
         mDestinationTimeZone = TimeZone.getTimeZone(DEST_TIME_ZONE);
 
-        mDefaultFormat.setTimeZone(mSourceTimeZone);
+        mSourceFormat.setTimeZone(mSourceTimeZone);
+        mDestinationFormat.setTimeZone(mDestinationTimeZone);
         setInitialTimeZonesInUi();
-        //logTimeZoneInfo();
 
-        String localDateTime = TimeZoneUtils.getLocalDateTime(mDefaultFormat);
+        String localDateTime = TimeZoneUtils.getCurrentDateTime(mSourceTimeZone, mSourceFormat);
         setLocalDateTimeInUi(localDateTime);
-        setDestDateTimeInUi(TimeZoneUtils.getDestinationDateTime(localDateTime, mDefaultFormat,
-                                                                mDestinationTimeZone));
+        String destDateTime = TimeZoneUtils.getCurrentDateTime(mDestinationTimeZone, mDestinationFormat);
+        setDestDateTimeInUi(destDateTime);
 
+        /*
         // TODO: place hasChangedSourceTimeZone in more appropriate place;
         // set it to true after the time zone actually has been selected
         sourceTimeZoneClickListener = new View.OnClickListener() {
@@ -77,6 +80,7 @@ public class MainActivity extends AppCompatActivity implements
                 showTimeZonePickerDialog(view);
             }
         };
+        */
 
         // TODO: place hasChangedDestTimeZone in more appropriate place;
         // set it to true after the time zone actually has been selected
@@ -88,6 +92,7 @@ public class MainActivity extends AppCompatActivity implements
             }
         };
 
+        /*
         timeClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -101,23 +106,23 @@ public class MainActivity extends AppCompatActivity implements
                 showDatePickerDialog(view);
             }
         };
-
+        */
         setAllClickListeners();
 
     }
 
     private void setAllClickListeners (){
         // Time zones
-        mBinding.sourceTimeZoneField.setOnClickListener(sourceTimeZoneClickListener);
+        //mBinding.sourceTimeZoneField.setOnClickListener(sourceTimeZoneClickListener);
         mBinding.destTimeZoneField.setOnClickListener(destTimeZoneClickListener);
 
         // time
-        mBinding.sourceTime.setOnClickListener(timeClickListener);
-        mBinding.destTime.setOnClickListener(timeClickListener);
+        //mBinding.sourceTime.setOnClickListener(timeClickListener);
+        //mBinding.destTime.setOnClickListener(timeClickListener);
 
         // date
-        mBinding.sourceDate.setOnClickListener(dateClickListener);
-        mBinding.destDate.setOnClickListener(dateClickListener);
+        //mBinding.sourceDate.setOnClickListener(dateClickListener);
+        //mBinding.destDate.setOnClickListener(dateClickListener);
     }
 
     /**
@@ -164,6 +169,7 @@ public class MainActivity extends AppCompatActivity implements
 
         if (hasChangedSourceTimeZone){
             mSourceTimeZone = timeZone;
+            mSourceFormat.setTimeZone(mSourceTimeZone);
 
             mBinding.sourceTimeZoneId.setText(id);
             mBinding.sourceDisplayName.setText(displayName);
@@ -171,6 +177,7 @@ public class MainActivity extends AppCompatActivity implements
             hasChangedSourceTimeZone = false;
         } else if (hasChangedDestTimeZone){
             mDestinationTimeZone = timeZone;
+            mDestinationFormat.setTimeZone(mDestinationTimeZone);
 
             mBinding.destTimeZoneId.setText(id);
             mBinding.destDisplayName.setText(displayName);
@@ -197,15 +204,6 @@ public class MainActivity extends AppCompatActivity implements
         timeZonePicker.setTimeZoneListener(this);
     }
 
-    public void convertCustomTime(){
-        String sourceTime = String.valueOf(mBinding.sourceTime.getText());
-        String sourceDate = String.valueOf(mBinding.sourceDate.getText());
-        String localDateTime = sourceDate + " " + sourceTime;
-
-        setDestDateTimeInUi(TimeZoneUtils.getDestinationDateTime(localDateTime, mDefaultFormat,
-                mDestinationTimeZone));
-    }
-
     @Override
     public void dateSet(String date) {
         mBinding.sourceDate.setText(date);
@@ -220,6 +218,14 @@ public class MainActivity extends AppCompatActivity implements
     public void timeZoneSet(String timeZoneId) {
         //Toast.makeText(this, timeZoneId, Toast.LENGTH_SHORT).show();
         setSelectedTimeZoneInUi(timeZoneId);
-        convertCustomTime();
+
+        /*
+        String sourceTime = String.valueOf(mBinding.sourceTime.getText());
+        String sourceDate = String.valueOf(mBinding.sourceDate.getText());
+        String localDateTime = sourceDate + " " + sourceTime;
+        */
+
+        String destTime = TimeZoneUtils.getCurrentDateTime(mDestinationTimeZone, mDestinationFormat);
+        setDestDateTimeInUi(destTime);
     }
 }
