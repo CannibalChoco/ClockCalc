@@ -28,6 +28,9 @@ public class MainActivity extends AppCompatActivity implements
     // placeholder destination time zone
     private static final String DEST_TIME_ZONE = "Africa/El_Aaiun";
 
+    // keys for SavedInstanceState
+    private static final String DEST_TIMEZONE_ID_KEY = "destTimeZoneString";
+
     //private SimpleDateFormat mDefaultFormat;
     private SimpleDateFormat mSourceFormat;
     private SimpleDateFormat mDestinationFormat;
@@ -63,6 +66,7 @@ public class MainActivity extends AppCompatActivity implements
 
         // local time zone
         mSourceTimeZone = TimeZone.getDefault();
+
         // placeholder time zone
         mDestinationTimeZone = TimeZone.getTimeZone(DEST_TIME_ZONE);
 
@@ -74,9 +78,6 @@ public class MainActivity extends AppCompatActivity implements
         setLocalDateTimeInUi(localDateTime);
         String destDateTime = TimeZoneUtils.getCurrentDateTime(mDestinationTimeZone, mDestinationFormat);
         setDestDateTimeInUi(destDateTime);
-
-
-
 
         /*
         // TODO: place hasChangedSourceTimeZone in more appropriate place;
@@ -117,6 +118,22 @@ public class MainActivity extends AppCompatActivity implements
         */
         setAllClickListeners();
 
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        outState.putString(DEST_TIMEZONE_ID_KEY, String.valueOf(mDestinationTimeZone.getID()));
+        Log.v("TEST outState", String.valueOf(mDestinationTimeZone.getID()));
+        super.onSaveInstanceState(outState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        String id = savedInstanceState.getString(DEST_TIMEZONE_ID_KEY);
+        TimeZone tz = TimeZone.getTimeZone(id);
+        mDestinationTimeZone = tz;
+        mDestClock.setTimeZone(id);
+        setSelectedTimeZoneInUi(id);
     }
 
     private void setAllClickListeners (){
@@ -184,7 +201,7 @@ public class MainActivity extends AppCompatActivity implements
             mBinding.sourceDisplayName.setText(displayName);
 
             hasChangedSourceTimeZone = false;
-        } else if (hasChangedDestTimeZone){
+        } else {
             mDestinationTimeZone = timeZone;
             mDestinationFormat.setTimeZone(mDestinationTimeZone);
 
