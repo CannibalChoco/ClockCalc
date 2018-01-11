@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextClock;
 import android.widget.Toast;
 
 import com.example.android.clockcalc.Utils.TimeZoneUtils;
@@ -41,6 +42,8 @@ public class MainActivity extends AppCompatActivity implements
     private View.OnClickListener timeClickListener;
     private View.OnClickListener dateClickListener;
 
+    TextClock mDestClock;
+
     private boolean hasChangedSourceTimeZone;
     private boolean hasChangedDestTimeZone;
 
@@ -48,6 +51,8 @@ public class MainActivity extends AppCompatActivity implements
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+
+        mDestClock = findViewById(R.id.destTime);
 
         hasChangedDestTimeZone = false;
         hasChangedSourceTimeZone = false;
@@ -69,6 +74,9 @@ public class MainActivity extends AppCompatActivity implements
         setLocalDateTimeInUi(localDateTime);
         String destDateTime = TimeZoneUtils.getCurrentDateTime(mDestinationTimeZone, mDestinationFormat);
         setDestDateTimeInUi(destDateTime);
+
+
+
 
         /*
         // TODO: place hasChangedSourceTimeZone in more appropriate place;
@@ -133,7 +141,8 @@ public class MainActivity extends AppCompatActivity implements
     private void setDestDateTimeInUi(String dateTime){
         String[] destDateTimeArr = dateTime.split(" ");
         mBinding.destDate.setText(destDateTimeArr[0]);
-        mBinding.destTime.setText(destDateTimeArr[1]);
+        //mBinding.destTime.setText(destDateTimeArr[1]);
+        mDestClock.setTimeZone(mDestinationTimeZone.getID());
     }
 
     /**
@@ -143,7 +152,7 @@ public class MainActivity extends AppCompatActivity implements
     private void setLocalDateTimeInUi (String localDateTime){
         String[] localDateTimeArr = localDateTime.split(" ");
         mBinding.sourceDate.setText(localDateTimeArr[0]);
-        mBinding.sourceTime.setText(localDateTimeArr[1]);
+        //mBinding.sourceTime.setText(localDateTimeArr[1]);
     }
 
     /**
