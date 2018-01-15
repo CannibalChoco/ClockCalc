@@ -18,6 +18,19 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 
+/**
+ * DB
+ */
+// TODO: Data- Create provider
+// TODO: Create cursorAdapter
+
+/**
+ * MainActivity
+ */
+// TODO: add fab
+// TODO: on fab click, open timezonePickerFragment and put the selected timeZone in db
+
+
 public class MainActivity extends AppCompatActivity implements
                                                 DatePickerFragment.DialogDateListener,
                                                 TimePickerFragment.DialogTimeListener,
@@ -55,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements
         super.onCreate(savedInstanceState);
         mBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
 
-        mDestClock = findViewById(R.id.destTime);
+        //mDestClock = findViewById(R.id.destTime);
 
         hasChangedDestTimeZone = false;
         hasChangedSourceTimeZone = false;
@@ -66,9 +79,11 @@ public class MainActivity extends AppCompatActivity implements
 
         // local time zone
         mSourceTimeZone = TimeZone.getDefault();
+        Log.i("TIMEZONE", String.valueOf(mSourceTimeZone));
 
         // placeholder time zone
         mDestinationTimeZone = TimeZone.getTimeZone(DEST_TIME_ZONE);
+        Log.i("TIMEZONE", String.valueOf(mDestinationTimeZone));
 
         mSourceFormat.setTimeZone(mSourceTimeZone);
         mDestinationFormat.setTimeZone(mDestinationTimeZone);
@@ -81,7 +96,9 @@ public class MainActivity extends AppCompatActivity implements
 
         /*
         // TODO: place hasChangedSourceTimeZone in more appropriate place;
-        // set it to true after the time zone actually has been selected
+        /* set it to true after the time zone actually has been selected,
+        instead of when the dialog is launched */
+        /*
         sourceTimeZoneClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -92,7 +109,9 @@ public class MainActivity extends AppCompatActivity implements
         */
 
         // TODO: place hasChangedDestTimeZone in more appropriate place;
-        // set it to true after the time zone actually has been selected
+        /* set it to true after the time zone actually has been selected,
+        instead of when the dialog is launched */
+        /*
         destTimeZoneClickListener = new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -132,14 +151,14 @@ public class MainActivity extends AppCompatActivity implements
         String id = savedInstanceState.getString(DEST_TIMEZONE_ID_KEY);
         TimeZone tz = TimeZone.getTimeZone(id);
         mDestinationTimeZone = tz;
-        mDestClock.setTimeZone(id);
+        //mDestClock.setTimeZone(id);
         setSelectedTimeZoneInUi(id);
     }
 
     private void setAllClickListeners (){
         // Time zones
         //mBinding.sourceTimeZoneField.setOnClickListener(sourceTimeZoneClickListener);
-        mBinding.destTimeZoneField.setOnClickListener(destTimeZoneClickListener);
+        //mBinding.destTimeZoneField.setOnClickListener(destTimeZoneClickListener);
 
         // time
         //mBinding.sourceTime.setOnClickListener(timeClickListener);
@@ -157,9 +176,9 @@ public class MainActivity extends AppCompatActivity implements
      */
     private void setDestDateTimeInUi(String dateTime){
         String[] destDateTimeArr = dateTime.split(" ");
-        mBinding.destDate.setText(destDateTimeArr[0]);
+        //mBinding.destDate.setText(destDateTimeArr[0]);
         //mBinding.destTime.setText(destDateTimeArr[1]);
-        mDestClock.setTimeZone(mDestinationTimeZone.getID());
+        //mDestClock.setTimeZone(mDestinationTimeZone.getID());
     }
 
     /**
@@ -168,7 +187,7 @@ public class MainActivity extends AppCompatActivity implements
      */
     private void setLocalDateTimeInUi (String localDateTime){
         String[] localDateTimeArr = localDateTime.split(" ");
-        mBinding.sourceDate.setText(localDateTimeArr[0]);
+        //mBinding.sourceDate.setText(localDateTimeArr[0]);
         //mBinding.sourceTime.setText(localDateTimeArr[1]);
     }
 
@@ -180,10 +199,10 @@ public class MainActivity extends AppCompatActivity implements
         String sourceDisplayName = mSourceTimeZone.getDisplayName(false, TimeZone.SHORT);
         String destId = mDestinationTimeZone.getID();
         String destDisplayName = mDestinationTimeZone.getDisplayName(false, TimeZone.SHORT);
-        mBinding.sourceTimeZoneId.setText(sourceId);
-        mBinding.sourceDisplayName.setText(sourceDisplayName);
-        mBinding.destTimeZoneId.setText(destId);
-        mBinding.destDisplayName.setText(destDisplayName);
+        //mBinding.sourceTimeZoneId.setText(sourceId);
+        //mBinding.sourceDisplayName.setText(sourceDisplayName);
+        //mBinding.destTimeZoneId.setText(destId);
+        //mBinding.destDisplayName.setText(destDisplayName);
     }
 
     /**
@@ -197,16 +216,16 @@ public class MainActivity extends AppCompatActivity implements
             mSourceTimeZone = timeZone;
             mSourceFormat.setTimeZone(mSourceTimeZone);
 
-            mBinding.sourceTimeZoneId.setText(id);
-            mBinding.sourceDisplayName.setText(displayName);
+            //mBinding.sourceTimeZoneId.setText(id);
+            //mBinding.sourceDisplayName.setText(displayName);
 
             hasChangedSourceTimeZone = false;
         } else {
             mDestinationTimeZone = timeZone;
             mDestinationFormat.setTimeZone(mDestinationTimeZone);
 
-            mBinding.destTimeZoneId.setText(id);
-            mBinding.destDisplayName.setText(displayName);
+            //mBinding.destTimeZoneId.setText(id);
+            //mBinding.destDisplayName.setText(displayName);
 
             hasChangedDestTimeZone = false;
         }
@@ -232,24 +251,17 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void dateSet(String date) {
-        mBinding.sourceDate.setText(date);
+        //mBinding.sourceDate.setText(date);
     }
 
     @Override
     public void timeSet(String time) {
-        mBinding.sourceTime.setText(time);
+        //mBinding.sourceTime.setText(time);
     }
 
     @Override
     public void timeZoneSet(String timeZoneId) {
-        //Toast.makeText(this, timeZoneId, Toast.LENGTH_SHORT).show();
         setSelectedTimeZoneInUi(timeZoneId);
-
-        /*
-        String sourceTime = String.valueOf(mBinding.sourceTime.getText());
-        String sourceDate = String.valueOf(mBinding.sourceDate.getText());
-        String localDateTime = sourceDate + " " + sourceTime;
-        */
 
         String destTime = TimeZoneUtils.getCurrentDateTime(mDestinationTimeZone, mDestinationFormat);
         setDestDateTimeInUi(destTime);

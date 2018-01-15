@@ -53,7 +53,7 @@ public class TimeZoneAdapter extends RecyclerView.Adapter<TimeZoneAdapter.TimeZo
     @Override
     public TimeZoneViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         Context context = parent.getContext();
-        int layoutForListItem = R.layout.list_item;
+        int layoutForListItem = R.layout.list_item_time_zone_picker;
         LayoutInflater inflater = LayoutInflater.from(context);
 
         View view = inflater.inflate(layoutForListItem, parent, false);

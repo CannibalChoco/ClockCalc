@@ -8,7 +8,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import java.util.TimeZone;
 
@@ -37,7 +36,7 @@ public class TimeZonePickerFragment extends DialogFragment implements TimeZoneAd
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.time_zone_picker_view, container);
 
-        recyclerView = rootView.findViewById(R.id.recyclerView);
+        recyclerView = rootView.findViewById(R.id.recyclerViewTimeZonePicker);
         recyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
 
         adapter = new TimeZoneAdapter(TimeZone.getAvailableIDs(), this);

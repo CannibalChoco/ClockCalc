@@ -1,163 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    tools:context="com.example.android.androidtimezones.MainActivity">
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
 
     <ScrollView
+        android:id="@+id/main_scroll_view"
         android:layout_height="match_parent"
         android:layout_width="match_parent">
 
-        <android.support.constraint.ConstraintLayout
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
 
-            <View
-                android:id="@+id/sourceBackground"
-                android:layout_width="0dp"
-                android:layout_height="300dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/destBackground"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintHorizontal_weight="1"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+            <include
+                layout="@layout/default_timezone_current"
+                android:id="@+id/default_timezone_current"/>
 
-            <View
-                android:id="@+id/destBackground"
-                android:layout_width="0dp"
-                android:layout_height="300dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintHorizontal_weight="1"
-                app:layout_constraintStart_toEndOf="@+id/sourceBackground"
-                app:layout_constraintTop_toTopOf="parent" />
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/recyclerViewCurrent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
 
-            <View
-                android:id="@+id/sourceTimeZoneField"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                app:layout_constraintBottom_toTopOf="@+id/sourceTime"
-                app:layout_constraintEnd_toStartOf="@+id/destBackground"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintHorizontal_weight="1"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <View
-                android:id="@+id/destTimeZoneField"
-                android:layout_width="0dp"
-                android:layout_height="0dp"
-                app:layout_constraintBottom_toTopOf="@+id/destTime"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.5"
-                app:layout_constraintHorizontal_weight="1"
-                app:layout_constraintStart_toEndOf="@+id/sourceBackground"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <TextView
-                android:id="@+id/sourceTimeZoneId"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="16dp"
-                app:layout_constraintEnd_toStartOf="@+id/destBackground"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="@+id/sourceBackground"
-                tools:text="Europe/Riga"/>
-
-            <TextView
-                android:id="@+id/destTimeZoneId"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                app:layout_constraintBaseline_toBaselineOf="@+id/sourceTimeZoneId"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@+id/destBackground"
-                tools:text="Europe/Prague" />
-
-            <TextClock
-                android:id="@+id/sourceTime"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="16dp"
-                android:fontFamily="sans-serif"
-                android:textSize="56sp"
-                android:textStyle="bold"
-                app:layout_constraintEnd_toStartOf="@+id/destBackground"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/sourceDisplayName"
-                tools:text="12:15"/>
-
-            <TextClock
-                android:id="@+id/destTime"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                tools:text="13:15"
-                android:textSize="56sp"
-                android:textStyle="bold"
-                app:layout_constraintBaseline_toBaselineOf="@+id/sourceTime"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@+id/destBackground" />
-
-            <TextView
-                android:id="@+id/sourceDate"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="16dp"
-                android:textSize="24sp"
-                app:layout_constraintEnd_toStartOf="@+id/destBackground"
-                app:layout_constraintStart_toStartOf="@+id/sourceBackground"
-                app:layout_constraintTop_toBottomOf="@+id/sourceTime"
-                tools:text="11/12/2017" />
-
-            <TextView
-                android:id="@+id/destDate"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                android:textSize="24sp"
-                app:layout_constraintBaseline_toBaselineOf="@+id/sourceDate"
-                app:layout_constraintEnd_toEndOf="@+id/destBackground"
-                app:layout_constraintStart_toStartOf="@+id/destBackground"
-                tools:text="11/12/2017" />
-
-            <TextView
-                android:id="@+id/sourceDisplayName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
-                android:textSize="12sp"
-                app:layout_constraintEnd_toStartOf="@+id/destBackground"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/sourceTimeZoneId"
-                tools:text="GMT+02:00"/>
-
-            <TextView
-                android:id="@+id/destDisplayName"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                android:text="TextView"
-                android:textSize="12sp"
-                app:layout_constraintBaseline_toBaselineOf="@+id/sourceDisplayName"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="@+id/destBackground"
-                tools:text="GMT+03:00" />
-
-        </android.support.constraint.ConstraintLayout>
     </ScrollView>
 </layout>

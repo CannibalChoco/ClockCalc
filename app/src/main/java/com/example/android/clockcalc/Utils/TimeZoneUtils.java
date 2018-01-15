@@ -6,6 +6,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
 /**
@@ -18,6 +19,8 @@ import java.util.TimeZone;
  * time zone:           libcore.util.ZoneInfo[id="Europe/Riga",mRawOffset=7200000,mEarliestRawOffset=5794000,mUseDst=true,mDstSavings=3600000,transitions=127]
  * ID:                  Europe/Riga
  * display name:        GMT+02:00
+ *
+ * mRawOffset:
  *
  */
 
@@ -39,11 +42,11 @@ public class TimeZoneUtils {
      * @param sourceDateTime source datetime String
      * @return formatted date converted to destination time zone
      */
-    public static String getDestinationDateTime(String sourceDateTime, SimpleDateFormat defaultFormat,
+    public static String getDestinationDateTime(String sourceDateTime, SimpleDateFormat timeFormat,
                                                 TimeZone destinationTimeZone) {
         try {
-            Date date = defaultFormat.parse(sourceDateTime);
-            SimpleDateFormat destFormat = defaultFormat;
+            Date date = timeFormat.parse(sourceDateTime);
+            SimpleDateFormat destFormat = timeFormat;
             destFormat.setTimeZone(destinationTimeZone);
 
             Log.v("Destination DateTime", destFormat.format(date));
@@ -55,6 +58,14 @@ public class TimeZoneUtils {
         }
 
         return null;
+    }
+
+    public static String convertTimeToDestTimeZone (int timeInMilis, String destId,
+                                                    SimpleDateFormat timeFormat){
+        Calendar destTimeZone = new GregorianCalendar(TimeZone.getTimeZone(destId));
+        destTimeZone.setTimeInMillis(timeInMilis);
+
+        return timeFormat.format(destTimeZone.getTime());
     }
 
 }
