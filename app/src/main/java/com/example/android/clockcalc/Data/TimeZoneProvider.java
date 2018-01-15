@@ -1,8 +1,12 @@
 package com.example.android.clockcalc.Data;
 
 import android.content.ContentProvider;
+import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -12,15 +16,70 @@ import android.support.annotation.Nullable;
  */
 
 public class TimeZoneProvider extends ContentProvider {
+
+    private TimeZoneDbHelper dbHelper;
+
+    /**
+     * URIMatcher code for the content URI for the time zone(current time) table
+     */
+    private static final int TIMEZONES_CURRENT = 100;
+
+    /**
+     * URIMatcher code for the content URI for a single timezone in the current time table
+     */
+    private static final int ID_TIMEZONE_CURRENT = 101;
+
+    /**
+     * UriMatcher object to match a content URI to a corresponding code.
+     * The input passed into the constructor represents the code to return for the root URI.
+     * It's common to use NO_MATCH as the input for this case.
+     */
+    private static final UriMatcher sUriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
+
+    /**
+     * Static initializer. This is run the first time anything is called from this class.
+     */
+    static {
+        sUriMatcher.addURI(TimeZoneContract.CONTENT_AUTHORITY, TimeZoneContract.PATH_CURRENT,
+                TIMEZONES_CURRENT);
+        sUriMatcher.addURI(TimeZoneContract.CONTENT_AUTHORITY, TimeZoneContract.PATH_CURRENT
+                + "/#", ID_TIMEZONE_CURRENT);
+    }
+
     @Override
     public boolean onCreate() {
-        return false;
+        dbHelper = new TimeZoneDbHelper(getContext());
+        return true;
     }
 
     @Nullable
     @Override
-    public Cursor query(@NonNull Uri uri, @Nullable String[] strings, @Nullable String s, @Nullable String[] strings1, @Nullable String s1) {
-        return null;
+    public Cursor query(@NonNull Uri uri, @Nullable String[] projection, @Nullable String selection,
+                        @Nullable String[] selectionArgs, @Nullable String sortOrder) {
+
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+        // hold result of the query
+        Cursor cursor;
+
+        int match = sUriMatcher.match(uri);
+        switch (match){
+            case TIMEZONES_CURRENT:
+                cursor = db.query(TimeZoneContract.CurrentEntry.TABLE_NAME, projection, selection, selectionArgs,
+                        null, null, sortOrder);
+                break;
+            case ID_TIMEZONE_CURRENT:
+                 selection = TimeZoneContract.CurrentEntry._ID + "=?";
+                 selectionArgs = new String[] {String.valueOf(ContentUris.parseId(uri))};
+
+                cursor = db.query(TimeZoneContract.CurrentEntry.TABLE_NAME, projection, selection, selectionArgs,
+                        null, null, sortOrder);
+                break;
+            default:
+                throw new IllegalArgumentException("Cannot query unknown URI " + uri);
+        }
+
+        return cursor;
     }
 
     @Nullable
