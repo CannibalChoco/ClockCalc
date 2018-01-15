@@ -88,7 +88,15 @@ public class TimeZoneProvider extends ContentProvider {
     @Nullable
     @Override
     public String getType(@NonNull Uri uri) {
-        return null;
+        int match = sUriMatcher.match(uri);
+        switch (match) {
+            case TIMEZONES_CURRENT:
+                return TimeZoneContract.CurrentEntry.CONTENT_LIST_TYPE;
+            case ID_TIMEZONE_CURRENT:
+                return TimeZoneContract.CurrentEntry.CONTENT_ITEM_TYPE;
+            default:
+                throw new IllegalStateException("Unknown URI " + uri + " with match " + match);
+        }
     }
 
     @Nullable
@@ -150,7 +158,8 @@ public class TimeZoneProvider extends ContentProvider {
     }
 
     @Override
-    public int update(@NonNull Uri uri, @Nullable ContentValues contentValues, @Nullable String s, @Nullable String[] strings) {
+    public int update(@NonNull Uri uri, @Nullable ContentValues contentValues, @Nullable String selection,
+                      @Nullable String[] selectionArgs) {
         return 0;
     }
 }
