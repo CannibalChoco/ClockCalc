@@ -122,8 +122,31 @@ public class TimeZoneProvider extends ContentProvider {
     }
 
     @Override
-    public int delete(@NonNull Uri uri, @Nullable String s, @Nullable String[] strings) {
-        return 0;
+    public int delete(@NonNull Uri uri, @Nullable String selection, @Nullable String[] selectionArgs) {
+        SQLiteDatabase db = dbHelper.getWritableDatabase();
+        int rowsDeleted;
+
+        int match = sUriMatcher.match(uri);
+        switch (match){
+            case TIMEZONES_CURRENT:
+                rowsDeleted = db.delete(TimeZoneContract.CurrentEntry.TABLE_NAME, selection,
+                        selectionArgs);
+                break;
+            case ID_TIMEZONE_CURRENT:
+                selection = TimeZoneContract.CurrentEntry._ID + "=?";
+                selectionArgs = new String[] {String.valueOf(ContentUris.parseId(uri))};
+                rowsDeleted = db.delete(TimeZoneContract.CurrentEntry.TABLE_NAME, selection,
+                        selectionArgs);
+                break;
+            default:
+                throw new IllegalArgumentException("Deletion is not supported for " + uri);
+        }
+
+        if(rowsDeleted != 0){
+            getContext().getContentResolver().notifyChange(uri, null);
+        }
+
+        return rowsDeleted;
     }
 
     @Override
