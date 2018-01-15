@@ -10,6 +10,7 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 /**
  * Created by Emils on 15.01.2018.
@@ -18,6 +19,8 @@ import android.support.annotation.Nullable;
 public class TimeZoneProvider extends ContentProvider {
 
     private TimeZoneDbHelper dbHelper;
+
+    private final static String LOG_TAG = TimeZoneProvider.class.getSimpleName();
 
     /**
      * URIMatcher code for the content URI for the time zone(current time) table
@@ -91,7 +94,31 @@ public class TimeZoneProvider extends ContentProvider {
     @Nullable
     @Override
     public Uri insert(@NonNull Uri uri, @Nullable ContentValues contentValues) {
-        return null;
+        long id;
+
+        int match = sUriMatcher.match(uri);
+        switch (match){
+            case TIMEZONES_CURRENT:
+                // check if timezone id is provided
+                String timeZoneId = contentValues.getAsString(
+                        TimeZoneContract.CurrentEntry.COLUMN_TIME_ZONE_ID);
+                if (timeZoneId == null){
+                    throw new IllegalArgumentException("Time zone requires an ID");
+                }
+                SQLiteDatabase db = dbHelper.getWritableDatabase();
+                id = db.insert(TimeZoneContract.CurrentEntry.TABLE_NAME, null,
+                        contentValues);
+
+                if (id == -1){
+                    Log.e(LOG_TAG, "Failed to insert row for " + uri);
+                    return null;
+                }
+
+                getContext().getContentResolver().notifyChange(uri, null);
+                return ContentUris.withAppendedId(uri, id);
+            default:
+                throw new IllegalArgumentException("Insertion is not supported for " + uri);
+        }
     }
 
     @Override
