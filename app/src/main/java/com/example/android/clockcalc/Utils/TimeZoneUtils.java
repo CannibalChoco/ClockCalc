@@ -26,13 +26,29 @@ import java.util.TimeZone;
 
 public class TimeZoneUtils {
 
+    private static final String DEFAULT_DATETIME_FORMAT = "dd/MM/yyyy HH:mm";
+    private static final String DEFAULT_DATE_FORMAT = "dd/MM/yyyy";
+
     /**
      * get current date and time from calendar
      * @return formatted datetime String
      */
-    public static String getCurrentDateTime (TimeZone timeZone, SimpleDateFormat defaultFormat){
+    public static String getCurrentDateTime (TimeZone timeZone){
+        SimpleDateFormat sdf = new SimpleDateFormat(DEFAULT_DATETIME_FORMAT);
         Calendar c = Calendar.getInstance(timeZone);
-        String formatted = defaultFormat.format(c.getTime());
+        String formatted = sdf.format(c.getTime());
+
+        return formatted;
+    }
+
+    /**
+     * get current date from calendar
+     * @return formatted date String
+     */
+    public static String getCurrentDate (TimeZone timeZone){
+        SimpleDateFormat sdf = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
+        Calendar c = Calendar.getInstance(timeZone);
+        String formatted = sdf.format(c.getTime());
 
         return formatted;
     }
