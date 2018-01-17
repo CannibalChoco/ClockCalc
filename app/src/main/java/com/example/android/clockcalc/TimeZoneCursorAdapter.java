@@ -2,16 +2,17 @@ package com.example.android.clockcalc;
 
 import android.content.Context;
 import android.database.Cursor;
-import android.databinding.DataBindingUtil;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
 import android.widget.TextClock;
+import android.widget.TextView;
 
 import com.example.android.clockcalc.Data.TimeZoneContract;
 import com.example.android.clockcalc.Utils.TimeZoneUtils;
-import com.example.android.clockcalc.databinding.ListItemDestCurrentBinding;
 
 import java.util.TimeZone;
 
@@ -19,42 +20,88 @@ import java.util.TimeZone;
  * Created by Emils on 16.01.2018.
  */
 
-public class TimeZoneCursorAdapter extends CursorAdapter {
+public class TimeZoneCursorAdapter extends RecyclerView.Adapter<TimeZoneCursorAdapter.TimeZoneViewHolder> {
 
-    public TimeZoneCursorAdapter(Context context, Cursor cursor){
-        super(context, cursor, 0);
+    private Cursor mCursor;
+    private Context mContext;
+
+    public TimeZoneCursorAdapter(Context context){
+        //mCursor = cursor;
+        mContext = context;
+    }
+
+    public class TimeZoneViewHolder extends RecyclerView.ViewHolder{
+        TextClock clock;
+        TextView timeZoneId;
+        TextView date;
+        TextView name;
+
+        public TimeZoneViewHolder(View view) {
+            super(view);
+
+            clock = view.findViewById(R.id.destClock);
+            timeZoneId = view.findViewById(R.id.destTimeZoneId);
+            date = view.findViewById(R.id.destDate);
+            name = view.findViewById(R.id.destDisplayName);
+        }
+    }
+
+    @Override
+    public TimeZoneViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+        View view = LayoutInflater.from(mContext).inflate(R.layout.list_item_dest_current, parent,
+                false);
+
+        return new TimeZoneViewHolder(view);
+    }
+
+    @Override
+    public void onBindViewHolder(TimeZoneViewHolder holder, int position) {
+        int timeZoneIdColIndex = mCursor.getColumnIndex(TimeZoneContract.CurrentEntry.COLUMN_TIME_ZONE_ID);
+        int _itIndex = mCursor.getColumnIndex(TimeZoneContract.CurrentEntry._ID);
+
+        mCursor.moveToPosition(position);
+
+        int rowId = mCursor.getInt(_itIndex);
+        String id = mCursor.getString(timeZoneIdColIndex);
+        TimeZone tz= TimeZone.getTimeZone(id);
+        String screenName = tz.getDisplayName(false, TimeZone.SHORT);
+
+        holder.itemView.setTag(rowId);
+
+        holder.timeZoneId.setText(id);
+        holder.name.setText(screenName);
+
+        holder.date.setText(TimeZoneUtils.getCurrentDate(tz));
+        holder.clock.setTimeZone(id);
     }
 
     /**
-     * Makes a new blank list item view. No data is set (or bound) to the views yet.
-     *
-     * @param context app context
-     * @param cursor  The cursor from which to get the data. The cursor is already
-     *                moved to the correct position.
-     * @param parent  The parent to which the new view is attached to
-     * @return the newly created list item view.
+     * Returns the number of items to display.
      */
     @Override
-    public View newView(Context context, Cursor cursor, ViewGroup parent) {
-        ListItemDestCurrentBinding binding = ListItemDestCurrentBinding.inflate(LayoutInflater.from(
-                context), parent, false);
-        return binding.getRoot();
+    public int getItemCount() {
+        if (mCursor == null) {
+            return 0;
+        }
+        return mCursor.getCount();
     }
 
-    @Override
-    public void bindView(View view, Context context, Cursor cursor) {
-        ListItemDestCurrentBinding binding = DataBindingUtil.getBinding(view);
+    /**
+     * When data changes and a re-query occurs, this function swaps the old Cursor
+     * with a newly updated Cursor (Cursor c) that is passed in.
+     */
+    public Cursor swapCursor(Cursor c) {
+        // check if this cursor is the same as the previous cursor (mCursor)
+        if (mCursor == c) {
+            return null; // bc nothing has changed
+        }
+        Cursor temp = mCursor;
+        this.mCursor = c; // new cursor value assigned
 
-        int timeZoneIdColIndex = cursor.getColumnIndex(TimeZoneContract.CurrentEntry.COLUMN_TIME_ZONE_ID);
-        String id = cursor.getString(timeZoneIdColIndex);
-
-        TimeZone tz= TimeZone.getTimeZone(id);
-        String screenName = tz.getDisplayName();
-
-        binding.destTimeZoneId.setText(id);
-        binding.destDisplayName.setText(screenName);
-
-        binding.destDate.setText(TimeZoneUtils.getCurrentDate(tz));
-        binding.destClock.setTimeZone(id);
+        //check if this is a valid cursor, then update the cursor
+        if (c != null) {
+            this.notifyDataSetChanged();
+        }
+        return temp;
     }
 }

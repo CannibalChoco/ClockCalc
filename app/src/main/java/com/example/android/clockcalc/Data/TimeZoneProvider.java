@@ -3,6 +3,7 @@ package com.example.android.clockcalc.Data;
 import android.content.ContentProvider;
 import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.SearchRecentSuggestionsProvider;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -66,10 +67,10 @@ public class TimeZoneProvider extends ContentProvider {
         Cursor cursor;
 
         int match = sUriMatcher.match(uri);
+        Log.i("INFO", "URI: " + String.valueOf(uri));
         switch (match){
             case TIMEZONES_CURRENT:
-                cursor = db.query(TimeZoneContract.CurrentEntry.TABLE_NAME, projection, selection, selectionArgs,
-                        null, null, sortOrder);
+                cursor = db.rawQuery("select * from " + TimeZoneContract.CurrentEntry.TABLE_NAME, null);
                 break;
             case ID_TIMEZONE_CURRENT:
                  selection = TimeZoneContract.CurrentEntry._ID + "=?";

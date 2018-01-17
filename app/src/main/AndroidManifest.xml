@@ -19,7 +19,7 @@
 
         <provider
             android:authorities="com.example.android.clockcalc"
-            android:name="com.example.android.clockcalc.Data.TimeZoneProvider"
+            android:name=".Data.TimeZoneProvider"
             android:exported="false"/>
     </application>
 

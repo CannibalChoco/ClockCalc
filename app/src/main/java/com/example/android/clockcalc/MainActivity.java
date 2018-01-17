@@ -7,23 +7,26 @@ import android.content.ContentValues;
 import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.databinding.DataBindingUtil;
 import android.net.Uri;
 import android.provider.ContactsContract;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TextClock;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.android.clockcalc.Data.TimeZoneContract;
 import com.example.android.clockcalc.Data.TimeZoneDbHelper;
 import com.example.android.clockcalc.Utils.TimeZoneUtils;
-import com.example.android.clockcalc.databinding.ActivityMainBinding;
-import com.example.android.clockcalc.databinding.DefaultTimezoneCurrentBinding;
 
 import java.text.SimpleDateFormat;
 import java.util.TimeZone;
@@ -31,7 +34,6 @@ import java.util.TimeZone;
 /**
  * MainActivity
  */
-// TODO: add fab
 // TODO: on fab click, open timezonePickerFragment and put the selected timeZone in db
 
 public class MainActivity extends AppCompatActivity implements
@@ -49,14 +51,8 @@ public class MainActivity extends AppCompatActivity implements
     // placeholder destination time zone
     private static final String DEST_TIME_ZONE = "Africa/El_Aaiun";
 
-    // keys for SavedInstanceState
-    private static final String DEST_TIMEZONE_ID_KEY = "destTimeZoneString";
-
     private SimpleDateFormat mSourceFormat;
     private TimeZone mSourceTimeZone;
-
-    private DefaultTimezoneCurrentBinding mDefaultTimeZoneBinding;
-    private ActivityMainBinding mActivityMainBinding;
 
     private View.OnClickListener sourceTimeZoneClickListener;
     private View.OnClickListener destTimeZoneClickListener;
@@ -66,40 +62,88 @@ public class MainActivity extends AppCompatActivity implements
     private TimeZoneDbHelper dbHelper;
     private TimeZoneCursorAdapter cursorAdapter;
 
+    private TextView sourceDateTv;
+    private TextView sourceTimeZoneIdTv;
+    private TextView sourceDisplayNameTv;
+    private TextClock sourceTime;
+
+    private Cursor cursor;
+    RecyclerView recyclerView;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
+        getSupportActionBar().setElevation(0f);
 
-        mDefaultTimeZoneBinding = DataBindingUtil.setContentView(this,
-                R.layout.default_timezone_current);
-        mActivityMainBinding = DataBindingUtil.setContentView(this, R.layout.activity_main);
+        sourceDateTv = findViewById(R.id.sourceDate);
+        sourceDisplayNameTv = findViewById(R.id.sourceDisplayName);
+        sourceTimeZoneIdTv = findViewById(R.id.sourceTimeZoneId);
+        sourceTime = findViewById(R.id.sourceTime);
 
         dbHelper = new TimeZoneDbHelper(this);
-        cursorAdapter = new TimeZoneCursorAdapter(this, null);
-        ListView listView = mActivityMainBinding.listViewCurrent;
-        listView.setAdapter(cursorAdapter);
+
+        recyclerView = findViewById(R.id.recyclerViewCurrent);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        cursorAdapter = new TimeZoneCursorAdapter(this);
+        recyclerView.setAdapter(cursorAdapter);
 
         // simple format for the default time
         mSourceFormat = new SimpleDateFormat(DEFAULT_DATETIME_FORMAT);
-
         // local time zone
         mSourceTimeZone = TimeZone.getDefault();
 
         mSourceFormat.setTimeZone(mSourceTimeZone);
-        setInitialTimeZonesInUi();
+        setLocalTimeZoneInfoInUi();
 
-        FloatingActionButton fab = mActivityMainBinding.fab;
+        /*
+         Add a touch helper to the RecyclerView to recognize when a user swipes to delete an item.
+         An ItemTouchHelper enables touch behavior (like swipe and move) on each ViewHolder,
+         and uses callbacks to signal when a user is performing these actions.
+         */
+
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+            @Override
+            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+                return false;
+            }
+
+            // Called when a user swipes left or right on a ViewHolder
+            @Override
+            public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
+                int id = (int) viewHolder.itemView.getTag();
+
+                // Build appropriate uri with String row id appended
+                String stringId = Integer.toString(id);
+                Uri uri = TimeZoneContract.CurrentEntry.CONTENT_URI;
+                uri = uri.buildUpon().appendPath(stringId).build();
+
+                // Delete a single row of data using a ContentResolver
+                getContentResolver().delete(uri, null, null);
+
+                // Restart the loader to re-query for all tasks after a deletion
+                getLoaderManager().restartLoader(DB_LOADER, null, MainActivity.this);
+
+            }
+        }).attachToRecyclerView(recyclerView);
+
+        FloatingActionButton fab = findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                insertTimeZoneInDb(DEST_TIME_ZONE);
-                insertTimeZoneInDb("Europe/Riga");
+                showTimeZonePickerDialog(view);
             }
         });
 
-        setLocalDateTimeInUi(TimeZoneUtils.getCurrentDateTime(mSourceTimeZone));
-
         getLoaderManager().initLoader(DB_LOADER, null, this);
+        //displayDbInfo();
+    }
+
+
+    private void getDbInfo (){
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+        cursor = db.rawQuery("select * from " + TimeZoneContract.CurrentEntry.TABLE_NAME, null);
     }
 
     @Override
@@ -110,27 +154,54 @@ public class MainActivity extends AppCompatActivity implements
         getLoaderManager().restartLoader(DB_LOADER, null, this);
     }
 
-    // TODO: refactor after db is set up and working
+    // displayed in UI
     @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        /*
-        outState.putString(DEST_TIMEZONE_ID_KEY, String.valueOf(mDestinationTimeZone.getID()));
-        Log.v("TEST outState", String.valueOf(mDestinationTimeZone.getID()));
-
-        */
-        super.onSaveInstanceState(outState);
+    public void timeZoneSet(String timeZoneId) {
+        insertTimeZoneInDb(timeZoneId);
     }
 
-    // TODO: refactor after db is set up and working
+    /**
+     * Instantiates and returns a new AsyncTaskLoader with the given ID.
+     * This loader will return task data as a Cursor or null if an error occurs.
+     *
+     * Implements the required callbacks to take care of loading data at all stages of loading.
+     */
     @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        /*
-        String id = savedInstanceState.getString(DEST_TIMEZONE_ID_KEY);
-        TimeZone tz = TimeZone.getTimeZone(id);
-        mDestinationTimeZone = tz;
-        //mDestClock.setTimeZone(id);
-        setSelectedTimeZoneInUi(id);
-        */
+    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+        Log.i("INFO", "onCreateLoader");
+        String[] projection = {
+                TimeZoneContract.CurrentEntry._ID,
+                TimeZoneContract.CurrentEntry.CONTENT_LIST_TYPE};
+
+        return new CursorLoader(this, TimeZoneContract.CurrentEntry.CONTENT_URI, projection,
+                null, null, null);
+    }
+
+    /**
+     * Called when a previously created loader has finished its load.
+     *
+     * @param loader The Loader that has finished.
+     * @param data The data generated by the Loader.
+     */
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        Log.i("INFO", "onLoadFinished");
+        cursorAdapter.swapCursor(data);
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        cursorAdapter.swapCursor(null);
+    }
+
+    @Override
+    public void dateSet(String date) {
+        //mBinding.sourceDate.setText(date);
+    }
+
+    @Override
+    public void timeSet(String time) {
+        //mBinding.sourceTime.setText(time);
     }
 
     private void setAllClickListeners (){
@@ -192,52 +263,15 @@ public class MainActivity extends AppCompatActivity implements
 
     /**
      * set local date and time in the TextViews
-     * @param localDateTime
      */
-    private void setLocalDateTimeInUi (String localDateTime){
-        String[] localDateTimeArr = localDateTime.split(" ");
+    private void setLocalTimeZoneInfoInUi (){
+        String id = mSourceTimeZone.getID();
+        String displayName = mSourceTimeZone.getDisplayName(false, TimeZone.SHORT);
+        sourceDateTv.setText(TimeZoneUtils.getCurrentDate(mSourceTimeZone));
+        sourceTime.setTimeZone(id);
 
-        mDefaultTimeZoneBinding.sourceDate.setText(localDateTimeArr[0]);
-        mDefaultTimeZoneBinding.sourceTime.setText(localDateTimeArr[1]);
-    }
-
-    /**
-     * set time zone ID's in TextViews
-     */
-    private void setInitialTimeZonesInUi (){
-        String sourceId = mSourceTimeZone.getID();
-        String sourceDisplayName = mSourceTimeZone.getDisplayName(false, TimeZone.SHORT);
-        mDefaultTimeZoneBinding.sourceTimeZoneId.setText(sourceId);
-        mDefaultTimeZoneBinding.sourceDisplayName.setText(sourceDisplayName);
-    }
-
-    // TODO: can't change default(initially)
-    // TODO: refactor to load all selected dest timezones from db
-    /**
-     * load all the selected time zones from db
-     */
-    private void setSelectedTimeZoneInUi(String id){
-        TimeZone timeZone = TimeZone.getTimeZone(id);
-        String displayName = timeZone.getDisplayName(false, TimeZone.SHORT);
-/*
-        if (hasChangedSourceTimeZone){
-            mSourceTimeZone = timeZone;
-            mSourceFormat.setTimeZone(mSourceTimeZone);
-
-            //mBinding.sourceTimeZoneId.setText(id);
-            //mBinding.sourceDisplayName.setText(displayName);
-
-            hasChangedSourceTimeZone = false;
-        } else {
-            mDestinationTimeZone = timeZone;
-            mDestinationFormat.setTimeZone(mDestinationTimeZone);
-
-            //mBinding.destTimeZoneId.setText(id);
-            //mBinding.destDisplayName.setText(displayName);
-
-            hasChangedDestTimeZone = false;
-        }
-        */
+        sourceTimeZoneIdTv.setText(id);
+        sourceDisplayNameTv.setText(displayName);
     }
 
     public void showTimePickerDialog(View v) {
@@ -258,23 +292,6 @@ public class MainActivity extends AppCompatActivity implements
         timeZonePicker.setTimeZoneListener(this);
     }
 
-    @Override
-    public void dateSet(String date) {
-        //mBinding.sourceDate.setText(date);
-    }
-
-    @Override
-    public void timeSet(String time) {
-        //mBinding.sourceTime.setText(time);
-    }
-
-    // TODO: when user selects timezone, store its id in db, then load all timezones from db to be
-    // displayed in UI
-    @Override
-    public void timeZoneSet(String timeZoneId) {
-        //insertTimeZoneInDb(timeZoneId);
-    }
-
     private void insertTimeZoneInDb(String timeZoneId){
         ContentValues values = new ContentValues();
         values.put(TimeZoneContract.CurrentEntry.COLUMN_TIME_ZONE_ID, timeZoneId);
@@ -286,71 +303,5 @@ public class MainActivity extends AppCompatActivity implements
         }
 
         getLoaderManager().restartLoader(DB_LOADER, null, this);
-    }
-
-    /**
-     * Instantiates and returns a new AsyncTaskLoader with the given ID.
-     * This loader will return task data as a Cursor or null if an error occurs.
-     *
-     * Implements the required callbacks to take care of loading data at all stages of loading.
-     */
-    @Override
-    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
-
-        return new AsyncTaskLoader<Cursor>(this) {
-
-            // Initialize a Cursor, this will hold all the task data
-            Cursor mTaskData = null;
-
-            // onStartLoading() is called when a loader first starts loading data
-            @Override
-            protected void onStartLoading() {
-                if (mTaskData != null) {
-                    // Delivers any previously loaded data immediately
-                    deliverResult(mTaskData);
-                } else {
-                    // Force a new load
-                    forceLoad();
-                }
-            }
-
-            @Override
-            public Cursor loadInBackground() {
-                try {
-                    return getContentResolver().query(TimeZoneContract.CurrentEntry.CONTENT_URI,
-                            null,
-                            null,
-                            null,
-                            null);
-
-                } catch (Exception e) {
-                    Log.e(TAG, "Failed to asynchronously load data.");
-                    e.printStackTrace();
-                    return null;
-                }
-            }
-
-            // deliverResult sends the result of the load, a Cursor, to the registered listener
-            public void deliverResult(Cursor data) {
-                mTaskData = data;
-                super.deliverResult(data);
-            }
-        };
-    }
-
-    /**
-     * Called when a previously created loader has finished its load.
-     *
-     * @param loader The Loader that has finished.
-     * @param data The data generated by the Loader.
-     */
-    @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        cursorAdapter.swapCursor(data);
-    }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> loader) {
-
     }
 }

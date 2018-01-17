@@ -33,7 +33,7 @@ public class TimeZoneContract {
     public static abstract class CurrentEntry implements BaseColumns {
 
         /** The content URI to access the timezones for current time data in the provider */
-        public static final Uri CONTENT_URI = BASE_CONTENT_URI.buildUpon().appendPath(PATH_CURRENT).build();
+        public static final Uri CONTENT_URI = Uri.withAppendedPath(BASE_CONTENT_URI, PATH_CURRENT);
 
         /**
          * The MIME type of the {@link #CONTENT_URI} for a list of timezones.

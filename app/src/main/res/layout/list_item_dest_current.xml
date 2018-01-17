@@ -1,57 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools">
-
-<android.support.constraint.ConstraintLayout
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="72dp">
 
     <TextClock
         android:id="@+id/destClock"
         android:layout_width="wrap_content"
-        android:layout_height="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="8dp"
         android:fontFamily="sans-serif"
         android:gravity="center"
         android:textSize="36sp"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="12:15"
-        android:layout_marginLeft="16dp" />
+        tools:text="12:15" />
 
     <TextView
         android:id="@+id/destTimeZoneId"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
+        android:layout_marginTop="16dp"
         app:layout_constraintStart_toEndOf="@+id/destClock"
-        tools:layout_editor_absoluteY="16dp"
-        tools:text="Europe/Prague"
-        android:layout_marginLeft="32dp" />
+        app:layout_constraintTop_toTopOf="parent"
+        tools:text="Europe/Prague" />
 
     <TextView
         android:id="@+id/destDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
         android:textSize="14sp"
         app:layout_constraintBaseline_toBaselineOf="@+id/destClock"
         app:layout_constraintEnd_toEndOf="parent"
-        tools:text="11/12/2017"
-        android:layout_marginRight="16dp" />
+        tools:text="11/12/2017" />
 
     <TextView
         android:id="@+id/destDisplayName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="32dp"
         android:layout_marginStart="32dp"
         android:textSize="12sp"
         app:layout_constraintBaseline_toBaselineOf="@+id/destClock"
         app:layout_constraintStart_toEndOf="@+id/destClock"
-        tools:text="GMT+02:00"
-        android:layout_marginLeft="32dp" />
+        tools:text="GMT+02:00" />
 
 </android.support.constraint.ConstraintLayout>
-</layout>
