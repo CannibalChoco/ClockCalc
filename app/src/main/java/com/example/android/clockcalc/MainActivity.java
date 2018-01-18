@@ -298,10 +298,6 @@ public class MainActivity extends AppCompatActivity implements
 
         Uri uri = getContentResolver().insert(TimeZoneContract.CurrentEntry.CONTENT_URI, values);
 
-        if(uri != null) {
-            Toast.makeText(getBaseContext(), uri.toString(), Toast.LENGTH_LONG).show();
-        }
-
         getLoaderManager().restartLoader(DB_LOADER, null, this);
     }
 }

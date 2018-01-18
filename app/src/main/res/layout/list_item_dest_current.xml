@@ -3,21 +3,22 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="72dp">
+    android:layout_height="60dp"
+    android:paddingRight="16dp"
+    android:paddingLeft="16dp">
 
     <TextClock
         android:id="@+id/destClock"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginStart="8dp"
         android:fontFamily="sans-serif"
-        android:gravity="center"
+        android:textColor="@color/colorPrimaryDark"
         android:textSize="36sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.545"
         tools:text="12:15" />
 
     <TextView
@@ -25,18 +26,19 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="32dp"
-        android:layout_marginTop="16dp"
+        android:ellipsize="end"
+        android:singleLine="true"
+        android:textColor="@color/colorAccent"
+        app:layout_constraintBottom_toTopOf="@+id/destDisplayName"
         app:layout_constraintStart_toEndOf="@+id/destClock"
-        app:layout_constraintTop_toTopOf="parent"
         tools:text="Europe/Prague" />
 
     <TextView
         android:id="@+id/destDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginRight="16dp"
         android:textSize="14sp"
+        android:layout_marginEnd="8dp"
         app:layout_constraintBaseline_toBaselineOf="@+id/destClock"
         app:layout_constraintEnd_toEndOf="parent"
         tools:text="11/12/2017" />
@@ -45,7 +47,6 @@
         android:id="@+id/destDisplayName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="32dp"
         android:layout_marginStart="32dp"
         android:textSize="12sp"
         app:layout_constraintBaseline_toBaselineOf="@+id/destClock"
