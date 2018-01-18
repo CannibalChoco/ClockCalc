@@ -71,7 +71,8 @@ public class TimeZoneCursorAdapter extends RecyclerView.Adapter<TimeZoneCursorAd
         holder.timeZoneId.setText(id);
         holder.name.setText(screenName);
 
-        holder.date.setText(TimeZoneUtils.getCurrentDate(tz));
+        String date = TimeZoneUtils.getCurrentDate(tz);
+        holder.date.setText(date);
         holder.clock.setTimeZone(id);
     }
 

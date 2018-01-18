@@ -29,6 +29,7 @@ import com.example.android.clockcalc.Data.TimeZoneDbHelper;
 import com.example.android.clockcalc.Utils.TimeZoneUtils;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.TimeZone;
 
 /**
@@ -97,13 +98,16 @@ public class MainActivity extends AppCompatActivity implements
         mSourceFormat.setTimeZone(mSourceTimeZone);
         setLocalTimeZoneInfoInUi();
 
+        logAllTimeZones();
+
         /*
          Add a touch helper to the RecyclerView to recognize when a user swipes to delete an item.
          An ItemTouchHelper enables touch behavior (like swipe and move) on each ViewHolder,
          and uses callbacks to signal when a user is performing these actions.
          */
 
-        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
+        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,
+                ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
             public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
                 return false;
@@ -140,6 +144,16 @@ public class MainActivity extends AppCompatActivity implements
         //displayDbInfo();
     }
 
+    public void logAllTimeZones (){
+        String[] allZones = TimeZone.getAvailableIDs();
+
+        for (String timeZone : allZones){
+            TimeZone tz = TimeZone.getTimeZone(timeZone);
+            Log.i("ZONE INFO", String.valueOf(tz));
+            ;
+            Log.i("ZONE INFO", tz.getDisplayName(false, TimeZone.SHORT));
+        }
+    }
 
     private void getDbInfo (){
         SQLiteDatabase db = dbHelper.getReadableDatabase();

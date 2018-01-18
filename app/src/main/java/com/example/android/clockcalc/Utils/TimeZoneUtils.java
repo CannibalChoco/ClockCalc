@@ -47,6 +47,7 @@ public class TimeZoneUtils {
      */
     public static String getCurrentDate (TimeZone timeZone){
         SimpleDateFormat sdf = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
+        sdf.setTimeZone(timeZone);
         Calendar c = Calendar.getInstance(timeZone);
         String formatted = sdf.format(c.getTime());
 
@@ -83,5 +84,6 @@ public class TimeZoneUtils {
 
         return timeFormat.format(destTimeZone.getTime());
     }
+
 
 }
