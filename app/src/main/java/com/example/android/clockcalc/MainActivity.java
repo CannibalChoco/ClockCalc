@@ -98,8 +98,6 @@ public class MainActivity extends AppCompatActivity implements
         mSourceFormat.setTimeZone(mSourceTimeZone);
         setLocalTimeZoneInfoInUi();
 
-        logAllTimeZones();
-
         /*
          Add a touch helper to the RecyclerView to recognize when a user swipes to delete an item.
          An ItemTouchHelper enables touch behavior (like swipe and move) on each ViewHolder,
@@ -141,23 +139,6 @@ public class MainActivity extends AppCompatActivity implements
         });
 
         getLoaderManager().initLoader(DB_LOADER, null, this);
-        //displayDbInfo();
-    }
-
-    public void logAllTimeZones (){
-        String[] allZones = TimeZone.getAvailableIDs();
-
-        for (String timeZone : allZones){
-            TimeZone tz = TimeZone.getTimeZone(timeZone);
-            Log.i("ZONE INFO", String.valueOf(tz));
-            ;
-            Log.i("ZONE INFO", tz.getDisplayName(false, TimeZone.SHORT));
-        }
-    }
-
-    private void getDbInfo (){
-        SQLiteDatabase db = dbHelper.getReadableDatabase();
-        cursor = db.rawQuery("select * from " + TimeZoneContract.CurrentEntry.TABLE_NAME, null);
     }
 
     @Override
