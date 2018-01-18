@@ -3,17 +3,18 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="60dp"
-    android:paddingRight="16dp"
-    android:paddingLeft="16dp">
+    android:layout_height="60dp">
 
     <TextClock
         android:id="@+id/destClock"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
+        android:layout_height="match_parent"
+        android:background="@color/colorAccent"
         android:fontFamily="sans-serif"
-        android:textColor="@color/colorPrimaryDark"
+        android:gravity="center"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:textColor="@android:color/white"
         android:textSize="36sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -23,12 +24,13 @@
 
     <TextView
         android:id="@+id/destTimeZoneId"
-        android:layout_width="wrap_content"
+        android:layout_width="240dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
+        android:layout_marginStart="16dp"
         android:ellipsize="end"
         android:singleLine="true"
         android:textColor="@color/colorAccent"
+        android:textSize="18sp"
         app:layout_constraintBottom_toTopOf="@+id/destDisplayName"
         app:layout_constraintStart_toEndOf="@+id/destClock"
         tools:text="Europe/Prague" />
@@ -37,8 +39,8 @@
         android:id="@+id/destDate"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="14sp"
-        android:layout_marginEnd="8dp"
+        android:textSize="12sp"
+        android:layout_marginEnd="16dp"
         app:layout_constraintBaseline_toBaselineOf="@+id/destClock"
         app:layout_constraintEnd_toEndOf="parent"
         tools:text="11/12/2017" />
@@ -47,7 +49,7 @@
         android:id="@+id/destDisplayName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="32dp"
+        android:layout_marginStart="16dp"
         android:textSize="12sp"
         app:layout_constraintBaseline_toBaselineOf="@+id/destClock"
         app:layout_constraintStart_toEndOf="@+id/destClock"

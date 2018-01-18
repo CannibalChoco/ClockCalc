@@ -35,6 +35,7 @@ public class TimeZoneUtils {
      */
     public static String getCurrentDateTime (TimeZone timeZone){
         SimpleDateFormat sdf = new SimpleDateFormat(DEFAULT_DATETIME_FORMAT);
+        sdf.setTimeZone(timeZone);
         Calendar c = Calendar.getInstance(timeZone);
         String formatted = sdf.format(c.getTime());
 
