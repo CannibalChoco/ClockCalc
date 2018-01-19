@@ -19,7 +19,6 @@ import android.widget.TextClock;
 import android.widget.TextView;
 
 import com.example.android.clockcalc.Data.TimeZoneContract;
-import com.example.android.clockcalc.Data.TimeZoneDbHelper;
 import com.example.android.clockcalc.Utils.TimeZoneUtils;
 
 import java.text.SimpleDateFormat;
@@ -116,14 +115,6 @@ public class MainActivity extends AppCompatActivity implements
         });
 
         getLoaderManager().initLoader(DB_LOADER, null, this);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        // re-queries for all tasks
-        getLoaderManager().restartLoader(DB_LOADER, null, this);
     }
 
     // displayed in UI
