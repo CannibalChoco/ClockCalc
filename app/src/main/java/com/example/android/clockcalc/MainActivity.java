@@ -2,15 +2,11 @@ package com.example.android.clockcalc;
 
 
 import android.app.LoaderManager;
-import android.content.AsyncTaskLoader;
 import android.content.ContentValues;
 import android.content.CursorLoader;
 import android.content.Loader;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.databinding.DataBindingUtil;
 import android.net.Uri;
-import android.provider.ContactsContract;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -19,23 +15,16 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.View;
-import android.widget.ListView;
 import android.widget.TextClock;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.android.clockcalc.Data.TimeZoneContract;
 import com.example.android.clockcalc.Data.TimeZoneDbHelper;
 import com.example.android.clockcalc.Utils.TimeZoneUtils;
 
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.TimeZone;
 
-/**
- * MainActivity
- */
-// TODO: on fab click, open timezonePickerFragment and put the selected timeZone in db
 
 public class MainActivity extends AppCompatActivity implements
                                                 DatePickerFragment.DialogDateListener,
@@ -49,18 +38,9 @@ public class MainActivity extends AppCompatActivity implements
 
     private static final String DEFAULT_DATETIME_FORMAT = "dd/MM/yyyy HH:mm";
 
-    // placeholder destination time zone
-    private static final String DEST_TIME_ZONE = "Africa/El_Aaiun";
-
     private SimpleDateFormat mSourceFormat;
     private TimeZone mSourceTimeZone;
 
-    private View.OnClickListener sourceTimeZoneClickListener;
-    private View.OnClickListener destTimeZoneClickListener;
-    private View.OnClickListener timeClickListener;
-    private View.OnClickListener dateClickListener;
-
-    private TimeZoneDbHelper dbHelper;
     private TimeZoneCursorAdapter cursorAdapter;
 
     private TextView sourceDateTv;
@@ -68,7 +48,6 @@ public class MainActivity extends AppCompatActivity implements
     private TextView sourceDisplayNameTv;
     private TextClock sourceTime;
 
-    private Cursor cursor;
     RecyclerView recyclerView;
 
     @Override
@@ -81,8 +60,6 @@ public class MainActivity extends AppCompatActivity implements
         sourceDisplayNameTv = findViewById(R.id.sourceDisplayName);
         sourceTimeZoneIdTv = findViewById(R.id.sourceTimeZoneId);
         sourceTime = findViewById(R.id.sourceTime);
-
-        dbHelper = new TimeZoneDbHelper(this);
 
         recyclerView = findViewById(R.id.recyclerViewCurrent);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -199,63 +176,6 @@ public class MainActivity extends AppCompatActivity implements
         //mBinding.sourceTime.setText(time);
     }
 
-    private void setAllClickListeners (){
-
-        /*
-        // TODO: place hasChangedSourceTimeZone in more appropriate place;
-        /* set it to true after the time zone actually has been selected,
-        instead of when the dialog is launched */
-        /*
-        sourceTimeZoneClickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                hasChangedSourceTimeZone = true;
-                showTimeZonePickerDialog(view);
-            }
-        };
-        */
-
-        // TODO: place hasChangedDestTimeZone in more appropriate place;
-        /* set it to true after the time zone actually has been selected,
-        instead of when the dialog is launched */
-        /*
-        destTimeZoneClickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                hasChangedDestTimeZone = true;
-                showTimeZonePickerDialog(view);
-            }
-        };
-
-        /*
-        timeClickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showTimePickerDialog(view);
-            }
-        };
-
-        dateClickListener = new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showDatePickerDialog(view);
-            }
-        };
-        */
-
-        // Time zones
-        //mBinding.sourceTimeZoneField.setOnClickListener(sourceTimeZoneClickListener);
-        //mBinding.destTimeZoneField.setOnClickListener(destTimeZoneClickListener);
-
-        // time
-        //mBinding.sourceTime.setOnClickListener(timeClickListener);
-        //mBinding.destTime.setOnClickListener(timeClickListener);
-
-        // date
-        //mBinding.sourceDate.setOnClickListener(dateClickListener);
-        //mBinding.destDate.setOnClickListener(dateClickListener);
-    }
-
     /**
      * set local date and time in the TextViews
      */
@@ -267,18 +187,6 @@ public class MainActivity extends AppCompatActivity implements
 
         sourceTimeZoneIdTv.setText(id);
         sourceDisplayNameTv.setText(displayName);
-    }
-
-    public void showTimePickerDialog(View v) {
-        TimePickerFragment timePicker = new TimePickerFragment();
-        timePicker.show(getSupportFragmentManager(), "timePicker");
-        timePicker.setTimeListener(this);
-    }
-
-    public void showDatePickerDialog(View v) {
-        DatePickerFragment datePicker = new DatePickerFragment();
-        datePicker.show(getSupportFragmentManager(), "datePicker");
-        datePicker.setDateListener(this);
     }
 
     public void showTimeZonePickerDialog(View v) {
