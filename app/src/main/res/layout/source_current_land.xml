@@ -5,18 +5,21 @@
     android:id="@+id/source_current_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorPrimary">
+    android:background="@color/colorAccent">
 
     <TextView
         android:id="@+id/sourceTimeZoneId"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="32dp"
+        android:layout_marginStart="8dp"
         android:layout_marginTop="16dp"
+        android:gravity="center"
         android:textColor="@android:color/white"
         android:textSize="20sp"
-        app:layout_constraintBottom_toTopOf="@+id/sourceTime"
+        app:layout_constraintEnd_toStartOf="@+id/sourceTime"
+        app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/sourceTime"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="Europe/Riga" />
 
@@ -24,11 +27,15 @@
         android:id="@+id/sourceDisplayName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginRight="32dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
         android:textColor="@android:color/white"
         android:textSize="16sp"
-        app:layout_constraintBaseline_toBaselineOf="@+id/sourceTimeZoneId"
-        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/sourceTimeZoneId"
+        app:layout_constraintStart_toEndOf="@+id/sourceTimeZoneId"
+        app:layout_constraintTop_toBottomOf="@+id/sourceTimeZoneId"
         tools:text="GMT+02:00" />
 
     <TextClock
@@ -36,17 +43,17 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginBottom="16dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp"
         android:fontFamily="sans-serif"
         android:gravity="center"
         android:textColor="@android:color/white"
         android:textSize="56sp"
-        app:layout_constraintBottom_toTopOf="@+id/sourceDate"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/sourceTimeZoneId"
+        app:layout_constraintTop_toTopOf="parent"
         tools:text="12:15" />
 
     <TextView
@@ -54,10 +61,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
-        android:layout_marginBottom="32dp"
+        android:layout_marginBottom="16dp"
         android:layout_marginEnd="8dp"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="8dp"
         android:textColor="@android:color/white"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -66,6 +72,5 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintStart_toEndOf="@+id/sourceTime"
-        app:layout_constraintTop_toBottomOf="@+id/sourceTime"
         tools:text="11/12/2017" />
 </android.support.constraint.ConstraintLayout>

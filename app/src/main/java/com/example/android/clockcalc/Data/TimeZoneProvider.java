@@ -71,6 +71,18 @@ public class TimeZoneProvider extends ContentProvider {
         switch (match){
             case TIMEZONES_CURRENT:
                 cursor = db.rawQuery("select * from " + TimeZoneContract.CurrentEntry.TABLE_NAME, null);
+
+                // TODO: find the bug!
+                /*
+                cursor = db.query(TimeZoneContract.CurrentEntry.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder);
+                        */
+
                 break;
             case ID_TIMEZONE_CURRENT:
                  selection = TimeZoneContract.CurrentEntry._ID + "=?";

@@ -26,7 +26,6 @@ public class TimeZoneCursorAdapter extends RecyclerView.Adapter<TimeZoneCursorAd
     private Context mContext;
 
     public TimeZoneCursorAdapter(Context context){
-        //mCursor = cursor;
         mContext = context;
     }
 
