@@ -70,10 +70,6 @@ public class TimeZoneProvider extends ContentProvider {
         Log.i("INFO", "URI: " + String.valueOf(uri));
         switch (match){
             case TIMEZONES_CURRENT:
-                cursor = db.rawQuery("select * from " + TimeZoneContract.CurrentEntry.TABLE_NAME, null);
-
-                // TODO: find the bug!
-                /*
                 cursor = db.query(TimeZoneContract.CurrentEntry.TABLE_NAME,
                         projection,
                         selection,
@@ -81,7 +77,7 @@ public class TimeZoneProvider extends ContentProvider {
                         null,
                         null,
                         sortOrder);
-                        */
+
 
                 break;
             case ID_TIMEZONE_CURRENT:
