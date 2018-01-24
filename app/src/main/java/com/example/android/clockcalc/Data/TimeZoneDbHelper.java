@@ -16,16 +16,27 @@ public class TimeZoneDbHelper extends SQLiteOpenHelper {
     /** name of the database file */
     private static final String DATABASE_NAME = "timeZones.db";
 
+    private static final String CREATE_TABLE = "CREATE TABLE ";
+
     private static final String DROP_TABLE = "DROP TABLE IF EXISTS";
 
     /**
      * String to create table of timezones for current time
      */
-    private static final String SQL_CREATE_CURRENT_TIME_TABLE = "CREATE TABLE " +
+    private static final String SQL_CREATE_CURRENT_TIME_TABLE = CREATE_TABLE +
             TimeZoneContract.CurrentEntry.TABLE_NAME +
             " (" +
             TimeZoneContract.CurrentEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
             TimeZoneContract.CurrentEntry.COLUMN_TIME_ZONE_ID + " TEXT NOT NULL); ";
+
+    /**
+     * String to create table of timezones for custom time
+     */
+    private static final String SQL_CREATE_CUSTOM_TIME_TABLE = CREATE_TABLE +
+            TimeZoneContract.CustomEntry.TABLE_NAME +
+            " (" +
+            TimeZoneContract.CustomEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            TimeZoneContract.CustomEntry.COLUMN_TIME_ZONE_ID + " TEXT NOT NULL); ";
 
 
     /**
@@ -38,11 +49,13 @@ public class TimeZoneDbHelper extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(SQL_CREATE_CURRENT_TIME_TABLE);
+        db.execSQL(SQL_CREATE_CUSTOM_TIME_TABLE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int i, int i1) {
         db.execSQL(DROP_TABLE + TimeZoneContract.CurrentEntry.TABLE_NAME);
+        db.execSQL(DROP_TABLE + TimeZoneContract.CustomEntry.TABLE_NAME);
 
         onCreate(db);
     }

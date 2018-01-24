@@ -16,11 +16,18 @@ public class SimpleFragmentPagerAdapter extends FragmentPagerAdapter {
 
     @Override
     public Fragment getItem(int position) {
-        return new CurrentTimeFragment();
+        switch (position){
+            case 0:
+                return new CurrentTimeFragment();
+            case 1:
+                return new CustomTimeFragment();
+            default:
+                return null;
+        }
     }
 
     @Override
     public int getCount() {
-        return 1;
+        return 2;
     }
 }
