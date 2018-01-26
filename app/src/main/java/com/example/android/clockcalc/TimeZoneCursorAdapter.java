@@ -20,6 +20,9 @@ import java.util.TimeZone;
 
 public class TimeZoneCursorAdapter extends RecyclerView.Adapter<TimeZoneCursorAdapter.TimeZoneViewHolder> {
 
+    private static final int VIEW_CURRENT = 0;
+    private static final int VIEW_CUSTOM = 1;
+
     private Cursor mCursor;
     private Context mContext;
 
@@ -53,8 +56,11 @@ public class TimeZoneCursorAdapter extends RecyclerView.Adapter<TimeZoneCursorAd
 
     @Override
     public void onBindViewHolder(TimeZoneViewHolder holder, int position) {
-        int timeZoneIdColIndex = mCursor.getColumnIndex(TimeZoneContract.CurrentEntry.COLUMN_TIME_ZONE_ID);
-        int _itIndex = mCursor.getColumnIndex(TimeZoneContract.CurrentEntry._ID);
+        /**
+         * indexes  are the same in both tables.
+         */
+        int timeZoneIdColIndex = mCursor.getColumnIndex(TimeZoneContract.TimeZonesEntry.COLUMN_TIME_ZONE_ID);
+        int _itIndex = mCursor.getColumnIndex(TimeZoneContract.TimeZonesEntry._ID);
 
         mCursor.moveToPosition(position);
 

@@ -32,7 +32,7 @@ public class CustomTimeFragment extends Fragment implements
 
     private static final String TAG = "CustomTimeFragment";
 
-    private static final int DB_LOADER = 2;
+    private static final int DB_LOADER = 1;
 
     private static final String DEFAULT_DATETIME_FORMAT = "dd/MM/yyyy HH:mm";
 
@@ -97,7 +97,7 @@ public class CustomTimeFragment extends Fragment implements
 
                 // Build appropriate uri with String row id appended
                 String stringId = Integer.toString(id);
-                Uri uri = TimeZoneContract.CurrentEntry.CONTENT_URI;
+                Uri uri = TimeZoneContract.TimeZonesEntry.CONTENT_URI;
                 uri = uri.buildUpon().appendPath(stringId).build();
 
                 // Delete a single row of data using a ContentResolver
@@ -125,26 +125,30 @@ public class CustomTimeFragment extends Fragment implements
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-//        String[] projection = new String[]{
-//                TimeZoneContract.CustomEntry._ID,
-//                TimeZoneContract.CustomEntry.COLUMN_TIME_ZONE_ID};
-//
-//        return new CursorLoader(getContext(), TimeZoneContract.CustomEntry.CONTENT_URI,
-//                projection,
-//                null,
-//                null,
-//                null);
-        return null;
+        String[] projection = new String[]{
+                TimeZoneContract.TimeZonesEntry._ID,
+                TimeZoneContract.TimeZonesEntry.COLUMN_TIME_ZONE_ID,
+                TimeZoneContract.TimeZonesEntry.COLUMN_TIME_DIFF};
+
+        String selection = TimeZoneContract.TimeZonesEntry.COLUMN_TIME_DIFF + "=?";
+
+        String[] selectionArgs = {"" + TimeZoneContract.TimeZonesEntry.DIFF_CUSTOM};
+
+        return new CursorLoader(getContext(), TimeZoneContract.TimeZonesEntry.CONTENT_URI,
+                projection,
+                selection,
+                selectionArgs,
+                null);
     }
 
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-//        cursorAdapter.swapCursor(data);
+        cursorAdapter.swapCursor(data);
     }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
-//        cursorAdapter.swapCursor(null);
+        cursorAdapter.swapCursor(null);
     }
 
     @Override
@@ -170,9 +174,11 @@ public class CustomTimeFragment extends Fragment implements
 
     private void insertTimeZoneInDb(String timeZoneId){
         ContentValues values = new ContentValues();
-        values.put(TimeZoneContract.CurrentEntry.COLUMN_TIME_ZONE_ID, timeZoneId);
+        values.put(TimeZoneContract.TimeZonesEntry.COLUMN_TIME_ZONE_ID, timeZoneId);
+        values.put(TimeZoneContract.TimeZonesEntry.COLUMN_TIME_DIFF, TimeZoneContract.TimeZonesEntry.DIFF_CUSTOM);
 
-        Uri uri = getActivity().getContentResolver().insert(TimeZoneContract.CustomEntry.CONTENT_URI, values);
+        Uri uri = getActivity().getContentResolver().insert(TimeZoneContract.TimeZonesEntry
+                .CONTENT_URI, values);
 
         getLoaderManager().restartLoader(DB_LOADER, null, this);
     }

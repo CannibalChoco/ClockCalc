@@ -22,24 +22,14 @@ public class TimeZoneProvider extends ContentProvider {
     private final static String LOG_TAG = TimeZoneProvider.class.getSimpleName();
 
     /**
-     * URIMatcher code for the content URI for the time zone(current time) table
+     * URIMatcher code for the content URI for the time zone table
      */
-    private static final int TIMEZONES_CURRENT = 100;
+    private static final int TIMEZONES = 100;
 
     /**
-     * URIMatcher code for the content URI for a single timezone in the current time table
+     * URIMatcher code for the content URI for a single timezone
      */
-    private static final int ID_TIMEZONE_CURRENT = 101;
-
-    /**
-     * URIMatcher code for the content URI for the time zone(custom time) table
-     */
-    private static final int TIMEZONES_CUSTOM = 200;
-
-    /**
-     * URIMatcher code for the content URI for a single timezone in the custom time table
-     */
-    private static final int ID_TIMEZONE_CUSTOM = 201;
+    private static final int ID_TIMEZONE = 101;
 
     /**
      * UriMatcher object to match a content URI to a corresponding code.
@@ -52,17 +42,8 @@ public class TimeZoneProvider extends ContentProvider {
      * Static initializer. This is run the first time anything is called from this class.
      */
     static {
-        // current
-        sUriMatcher.addURI(TimeZoneContract.CONTENT_AUTHORITY, TimeZoneContract.PATH_TABLE_CURRENT,
-                TIMEZONES_CURRENT);
-        sUriMatcher.addURI(TimeZoneContract.CONTENT_AUTHORITY, TimeZoneContract.PATH_TABLE_CURRENT
-                + "/#", ID_TIMEZONE_CURRENT);
-
-        // custom
-        sUriMatcher.addURI(TimeZoneContract.CONTENT_AUTHORITY, TimeZoneContract.PATH_TABLE_CUSTOM,
-                TIMEZONES_CUSTOM);
-        sUriMatcher.addURI(TimeZoneContract.CONTENT_AUTHORITY, TimeZoneContract.PATH_TABLE_CUSTOM
-                + "/#", ID_TIMEZONE_CUSTOM);
+        sUriMatcher.addURI(TimeZoneContract.CONTENT_AUTHORITY, TimeZoneContract.PATH_TABLE_TIME_ZONES, TIMEZONES); // 100
+        sUriMatcher.addURI(TimeZoneContract.CONTENT_AUTHORITY, TimeZoneContract.PATH_TABLE_TIME_ZONES + "/#", ID_TIMEZONE); // 101
     }
 
     @Override
@@ -84,8 +65,9 @@ public class TimeZoneProvider extends ContentProvider {
         int match = sUriMatcher.match(uri);
         Log.i("INFO", "URI: " + String.valueOf(uri));
         switch (match){
-            case TIMEZONES_CURRENT:
-                cursor = db.query(TimeZoneContract.CurrentEntry.TABLE_NAME,
+            case TIMEZONES:
+                // TODO: no such table error
+                cursor = db.query(TimeZoneContract.TimeZonesEntry.TABLE_NAME,
                         projection,
                         selection,
                         selectionArgs,
@@ -93,32 +75,13 @@ public class TimeZoneProvider extends ContentProvider {
                         null,
                         sortOrder);
 
-
                 break;
-            case ID_TIMEZONE_CURRENT:
-                 selection = TimeZoneContract.CurrentEntry._ID + "=?";
+            case ID_TIMEZONE:
+                 selection = TimeZoneContract.TimeZonesEntry._ID + "=?";
                  selectionArgs = new String[] {String.valueOf(ContentUris.parseId(uri))};
 
-                cursor = db.query(TimeZoneContract.CurrentEntry.TABLE_NAME, projection, selection, selectionArgs,
+                cursor = db.query(TimeZoneContract.TimeZonesEntry.TABLE_NAME, projection, selection, selectionArgs,
                         null, null, sortOrder);
-                break;
-            case TIMEZONES_CUSTOM:
-                cursor = db.query(TimeZoneContract.CustomEntry.TABLE_NAME,
-                        projection,
-                        selection,
-                        selectionArgs,
-                        null,
-                        null,
-                        sortOrder);
-
-                break;
-            case ID_TIMEZONE_CUSTOM:
-                selection = TimeZoneContract.CustomEntry._ID + "=?";
-                selectionArgs = new String[] {String.valueOf(ContentUris.parseId(uri))};
-
-                cursor = db.query(TimeZoneContract.CustomEntry.TABLE_NAME, projection, selection, selectionArgs,
-                        null, null, sortOrder);
-
                 break;
             default:
                 throw new IllegalArgumentException("Cannot query unknown URI " + uri);
@@ -132,10 +95,10 @@ public class TimeZoneProvider extends ContentProvider {
     public String getType(@NonNull Uri uri) {
         int match = sUriMatcher.match(uri);
         switch (match) {
-            case TIMEZONES_CURRENT:
-                return TimeZoneContract.CurrentEntry.CONTENT_LIST_TYPE;
-            case ID_TIMEZONE_CURRENT:
-                return TimeZoneContract.CurrentEntry.CONTENT_ITEM_TYPE;
+            case TIMEZONES:
+                return TimeZoneContract.TimeZonesEntry.CONTENT_LIST_TYPE;
+            case ID_TIMEZONE:
+                return TimeZoneContract.TimeZonesEntry.CONTENT_ITEM_TYPE;
             default:
                 throw new IllegalStateException("Unknown URI " + uri + " with match " + match);
         }
@@ -145,22 +108,13 @@ public class TimeZoneProvider extends ContentProvider {
     @Override
     public Uri insert(@NonNull Uri uri, @Nullable ContentValues contentValues) {
         long id;
-        String timeZoneId;
         SQLiteDatabase db;
 
         int match = sUriMatcher.match(uri);
         switch (match){
-            case TIMEZONES_CURRENT:
-                // check if timezone id is provided
-                timeZoneId = contentValues.getAsString(
-                        TimeZoneContract.CurrentEntry.COLUMN_TIME_ZONE_ID);
-
-                if (timeZoneId == null) {
-                    throw new IllegalArgumentException("Time zone requires an ID");
-                }
-
+            case TIMEZONES:
                 db = dbHelper.getWritableDatabase();
-                id = db.insert(TimeZoneContract.CurrentEntry.TABLE_NAME, null,
+                id = db.insert(TimeZoneContract.TimeZonesEntry.TABLE_NAME, null,
                         contentValues);
 
                 if (id == -1){
@@ -170,22 +124,6 @@ public class TimeZoneProvider extends ContentProvider {
 
                 getContext().getContentResolver().notifyChange(uri, null);
                 return ContentUris.withAppendedId(uri, id);
-            case TIMEZONES_CUSTOM:
-                timeZoneId = contentValues.getAsString(
-                        TimeZoneContract.CustomEntry.COLUMN_TIME_ZONE_ID);
-
-                if (timeZoneId == null){
-                    throw new IllegalArgumentException("Time zone requires an ID");
-                }
-
-                db = dbHelper.getWritableDatabase();
-                id = db.insert(TimeZoneContract.CustomEntry.TABLE_NAME, null,
-                        contentValues);
-
-                if (id == -1){
-                    Log.e(LOG_TAG, "Failed to insert row for " + uri);
-                    return null;
-                }
             default:
                 throw new IllegalArgumentException("Insertion is not supported for " + uri);
         }
@@ -198,24 +136,14 @@ public class TimeZoneProvider extends ContentProvider {
 
         int match = sUriMatcher.match(uri);
         switch (match){
-            case TIMEZONES_CURRENT:
-                rowsDeleted = db.delete(TimeZoneContract.CurrentEntry.TABLE_NAME, selection,
+            case TIMEZONES:
+                rowsDeleted = db.delete(TimeZoneContract.TimeZonesEntry.TABLE_NAME, selection,
                         selectionArgs);
                 break;
-            case ID_TIMEZONE_CURRENT:
-                selection = TimeZoneContract.CurrentEntry._ID + "=?";
+            case ID_TIMEZONE:
+                selection = TimeZoneContract.TimeZonesEntry._ID + "=?";
                 selectionArgs = new String[] {String.valueOf(ContentUris.parseId(uri))};
-                rowsDeleted = db.delete(TimeZoneContract.CurrentEntry.TABLE_NAME, selection,
-                        selectionArgs);
-                break;
-            case TIMEZONES_CUSTOM:
-                rowsDeleted = db.delete(TimeZoneContract.CustomEntry.TABLE_NAME, selection,
-                        selectionArgs);
-                break;
-            case ID_TIMEZONE_CUSTOM:
-                selection = TimeZoneContract.CustomEntry._ID + "=?";
-                selectionArgs = new String[] {String.valueOf(ContentUris.parseId(uri))};
-                rowsDeleted = db.delete(TimeZoneContract.CustomEntry.TABLE_NAME, selection,
+                rowsDeleted = db.delete(TimeZoneContract.TimeZonesEntry.TABLE_NAME, selection,
                         selectionArgs);
                 break;
             default:

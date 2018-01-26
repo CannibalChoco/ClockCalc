@@ -3,6 +3,7 @@ package com.example.android.clockcalc.Data;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 /**
  * Created by Emils on 15.01.2018.
@@ -23,20 +24,13 @@ public class TimeZoneDbHelper extends SQLiteOpenHelper {
     /**
      * String to create table of timezones for current time
      */
-    private static final String SQL_CREATE_CURRENT_TIME_TABLE = CREATE_TABLE +
-            TimeZoneContract.CurrentEntry.TABLE_NAME +
+    private static final String SQL_CREATE_TIME_ZONES_TABLE =
+            CREATE_TABLE +
+            TimeZoneContract.TimeZonesEntry.TABLE_NAME +
             " (" +
-            TimeZoneContract.CurrentEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-            TimeZoneContract.CurrentEntry.COLUMN_TIME_ZONE_ID + " TEXT NOT NULL); ";
-
-    /**
-     * String to create table of timezones for custom time
-     */
-    private static final String SQL_CREATE_CUSTOM_TIME_TABLE = CREATE_TABLE +
-            TimeZoneContract.CustomEntry.TABLE_NAME +
-            " (" +
-            TimeZoneContract.CustomEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-            TimeZoneContract.CustomEntry.COLUMN_TIME_ZONE_ID + " TEXT NOT NULL); ";
+            TimeZoneContract.TimeZonesEntry._ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+            TimeZoneContract.TimeZonesEntry.COLUMN_TIME_ZONE_ID + " TEXT NOT NULL, " +
+            TimeZoneContract.TimeZonesEntry.COLUMN_TIME_DIFF + " INTEGER);";
 
 
     /**
@@ -48,14 +42,12 @@ public class TimeZoneDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL(SQL_CREATE_CURRENT_TIME_TABLE);
-        db.execSQL(SQL_CREATE_CUSTOM_TIME_TABLE);
+        db.execSQL(SQL_CREATE_TIME_ZONES_TABLE);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int i, int i1) {
-        db.execSQL(DROP_TABLE + TimeZoneContract.CurrentEntry.TABLE_NAME);
-        db.execSQL(DROP_TABLE + TimeZoneContract.CustomEntry.TABLE_NAME);
+        db.execSQL(DROP_TABLE + TimeZoneContract.TimeZonesEntry.TABLE_NAME);
 
         onCreate(db);
     }

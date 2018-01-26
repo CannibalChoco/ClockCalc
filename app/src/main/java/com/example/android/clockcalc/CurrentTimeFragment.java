@@ -55,8 +55,6 @@ public class CurrentTimeFragment extends Fragment implements
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main_view, container, false);
 
-        /////////////////
-
         sourceDateTv = rootView.findViewById(R.id.sourceDate);
         sourceDisplayNameTv = rootView.findViewById(R.id.sourceDisplayName);
         sourceTimeZoneIdTv = rootView.findViewById(R.id.sourceTimeZoneId);
@@ -96,7 +94,7 @@ public class CurrentTimeFragment extends Fragment implements
 
                 // Build appropriate uri with String row id appended
                 String stringId = Integer.toString(id);
-                Uri uri = TimeZoneContract.CurrentEntry.CONTENT_URI;
+                Uri uri = TimeZoneContract.TimeZonesEntry.CONTENT_URI;
                 uri = uri.buildUpon().appendPath(stringId).build();
 
                 // Delete a single row of data using a ContentResolver
@@ -117,13 +115,9 @@ public class CurrentTimeFragment extends Fragment implements
         });
         getLoaderManager().initLoader(DB_LOADER, null, this);
 
-        /////////////////
-
         return rootView;
     }
 
-
-    // displayed in UI
     @Override
     public void timeZoneSet(String timeZoneId) {
         insertTimeZoneInDb(timeZoneId);
@@ -138,13 +132,18 @@ public class CurrentTimeFragment extends Fragment implements
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         String[] projection = new String[]{
-                TimeZoneContract.CurrentEntry._ID,
-                TimeZoneContract.CurrentEntry.COLUMN_TIME_ZONE_ID};
+                TimeZoneContract.TimeZonesEntry._ID,
+                TimeZoneContract.TimeZonesEntry.COLUMN_TIME_ZONE_ID,
+                TimeZoneContract.TimeZonesEntry.COLUMN_TIME_DIFF};
 
-        return new CursorLoader(getContext(), TimeZoneContract.CurrentEntry.CONTENT_URI,
+        String selection = TimeZoneContract.TimeZonesEntry.COLUMN_TIME_DIFF + "=?";
+
+        String[] selectionArgs = {"" + TimeZoneContract.TimeZonesEntry.DIFF_CURRENT};
+
+        return new CursorLoader(getContext(), TimeZoneContract.TimeZonesEntry.CONTENT_URI,
                 projection,
-                null,
-                null,
+                selection,
+                selectionArgs,
                 null);
     }
 
@@ -166,9 +165,11 @@ public class CurrentTimeFragment extends Fragment implements
 
     private void insertTimeZoneInDb(String timeZoneId){
         ContentValues values = new ContentValues();
-        values.put(TimeZoneContract.CurrentEntry.COLUMN_TIME_ZONE_ID, timeZoneId);
+        values.put(TimeZoneContract.TimeZonesEntry.COLUMN_TIME_ZONE_ID, timeZoneId);
+        values.put(TimeZoneContract.TimeZonesEntry.COLUMN_TIME_DIFF, TimeZoneContract.TimeZonesEntry.DIFF_CURRENT);
 
-        Uri uri = getActivity().getContentResolver().insert(TimeZoneContract.CurrentEntry.CONTENT_URI, values);
+        Uri uri = getActivity().getContentResolver().insert(TimeZoneContract.TimeZonesEntry
+                .CONTENT_URI, values);
 
         getLoaderManager().restartLoader(DB_LOADER, null, this);
     }
