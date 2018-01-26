@@ -66,7 +66,6 @@ public class TimeZoneProvider extends ContentProvider {
         Log.i("INFO", "URI: " + String.valueOf(uri));
         switch (match){
             case TIMEZONES:
-                // TODO: no such table error
                 cursor = db.query(TimeZoneContract.TimeZonesEntry.TABLE_NAME,
                         projection,
                         selection,

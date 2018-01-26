@@ -11,7 +11,7 @@
 
 
         <include
-            layout="@layout/source_time"
+            layout="@layout/source_custom"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"/>
 

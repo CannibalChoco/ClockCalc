@@ -16,8 +16,8 @@
             android:layout_height="match_parent">
 
 
-            <TextClock
-                android:id="@+id/destClock"
+            <TextView
+                android:id="@+id/destClockTv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
@@ -53,7 +53,7 @@
                 android:layout_marginEnd="16dp"
                 android:textColor="@color/colorPrimary"
                 android:textSize="16sp"
-                app:layout_constraintBaseline_toBaselineOf="@+id/destClock"
+                app:layout_constraintBaseline_toBaselineOf="@+id/destClockTv"
                 app:layout_constraintEnd_toEndOf="parent"
                 tools:text="11/12/2017" />
 

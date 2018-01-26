@@ -1,7 +1,6 @@
 package com.example.android.clockcalc;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
@@ -44,7 +43,7 @@ public class CustomTimeFragment extends Fragment implements
     private TextView sourceDateTv;
     private TextView sourceTimeZoneIdTv;
     private TextView sourceDisplayNameTv;
-    private TextClock sourceTime;
+    private TextView sourceTime;
 
     RecyclerView recyclerView;
 
@@ -53,7 +52,7 @@ public class CustomTimeFragment extends Fragment implements
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_main_view, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_custom, container, false);
 
 
         /////////////////
@@ -66,7 +65,7 @@ public class CustomTimeFragment extends Fragment implements
         recyclerView = rootView.findViewById(R.id.recyclerViewCurrent);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        cursorAdapter = new TimeZoneCursorAdapter(getActivity());
+        cursorAdapter = new TimeZoneCursorAdapter(getActivity(), TimeZoneContract.TimeZonesEntry.DIFF_CUSTOM);
         recyclerView.setAdapter(cursorAdapter);
 
         // simple format for the default time
@@ -160,7 +159,10 @@ public class CustomTimeFragment extends Fragment implements
         String id = mSourceTimeZone.getID();
         String displayName = mSourceTimeZone.getDisplayName(false, TimeZone.SHORT);
         sourceDateTv.setText(TimeZoneUtils.getCurrentDate(mSourceTimeZone));
-        sourceTime.setTimeZone(id);
+
+        // TODO: display time in TextView
+        //sourceTime.setTimeZone(id);
+        sourceTime.setText("55:55");
 
         sourceTimeZoneIdTv.setText(id);
         sourceDisplayNameTv.setText(displayName);

@@ -13,7 +13,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,7 +52,7 @@ public class CurrentTimeFragment extends Fragment implements
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View rootView = inflater.inflate(R.layout.fragment_main_view, container, false);
+        View rootView = inflater.inflate(R.layout.fragment_current, container, false);
 
         sourceDateTv = rootView.findViewById(R.id.sourceDate);
         sourceDisplayNameTv = rootView.findViewById(R.id.sourceDisplayName);
@@ -63,7 +62,7 @@ public class CurrentTimeFragment extends Fragment implements
         recyclerView = rootView.findViewById(R.id.recyclerViewCurrent);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        cursorAdapter = new TimeZoneCursorAdapter(getActivity());
+        cursorAdapter = new TimeZoneCursorAdapter(getActivity(), TimeZoneContract.TimeZonesEntry.DIFF_CURRENT);
         recyclerView.setAdapter(cursorAdapter);
 
         // simple format for the default time

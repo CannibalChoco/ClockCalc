@@ -20,36 +20,60 @@ import java.util.TimeZone;
 
 public class TimeZoneCursorAdapter extends RecyclerView.Adapter<TimeZoneCursorAdapter.TimeZoneViewHolder> {
 
-    private static final int VIEW_CURRENT = 0;
-    private static final int VIEW_CUSTOM = 1;
-
     private Cursor mCursor;
     private Context mContext;
+    private int mView;
 
-    public TimeZoneCursorAdapter(Context context){
+    public TimeZoneCursorAdapter(Context context, int viewType){
         mContext = context;
+        mView = viewType;
     }
 
     public class TimeZoneViewHolder extends RecyclerView.ViewHolder{
-        TextClock clock;
+        TextClock clockTc;
+        TextView clockTv;
         TextView timeZoneId;
         TextView date;
-        TextView name;
+        TextView displayName;
 
         public TimeZoneViewHolder(View view) {
             super(view);
 
-            clock = view.findViewById(R.id.destClock);
             timeZoneId = view.findViewById(R.id.destTimeZoneId);
             date = view.findViewById(R.id.destDate);
-            name = view.findViewById(R.id.destDisplayName);
+            displayName = view.findViewById(R.id.destDisplayName);
+
+            switch (mView) {
+                case (TimeZoneContract.TimeZonesEntry.DIFF_CURRENT):
+                    clockTc = view.findViewById(R.id.destClockTc);
+                    break;
+                case (TimeZoneContract.TimeZonesEntry.DIFF_CUSTOM):
+                    clockTv = view.findViewById(R.id.destClockTv);
+                    break;
+                default:
+                    throw new IllegalArgumentException("Invalid view type, value of " + mView);
+            }
+
         }
     }
 
     @Override
     public TimeZoneViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(mContext).inflate(R.layout.list_item_dest_time, parent,
-                false);
+
+        int layout;
+
+        switch (mView){
+            case (TimeZoneContract.TimeZonesEntry.DIFF_CURRENT):
+                layout = R.layout.list_item_dest_current;
+                break;
+            case (TimeZoneContract.TimeZonesEntry.DIFF_CUSTOM):
+                layout = R.layout.list_item_dest_custom;
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid view type, value of " + mView);
+        }
+
+        View view = LayoutInflater.from(mContext).inflate(layout, parent,false);
 
         return new TimeZoneViewHolder(view);
     }
@@ -67,16 +91,27 @@ public class TimeZoneCursorAdapter extends RecyclerView.Adapter<TimeZoneCursorAd
         int rowId = mCursor.getInt(_itIndex);
         String id = mCursor.getString(timeZoneIdColIndex);
         TimeZone tz= TimeZone.getTimeZone(id);
-        String screenName = tz.getDisplayName(false, TimeZone.SHORT);
+        String displayName = tz.getDisplayName(false, TimeZone.SHORT);
 
         holder.itemView.setTag(rowId);
 
         holder.timeZoneId.setText(id);
-        holder.name.setText(screenName);
+        holder.displayName.setText(displayName);
 
         String date = TimeZoneUtils.getCurrentDate(tz);
         holder.date.setText(date);
-        holder.clock.setTimeZone(id);
+
+        switch (mView) {
+            case (TimeZoneContract.TimeZonesEntry.DIFF_CURRENT):
+                holder.clockTc.setTimeZone(id);
+                break;
+            case (TimeZoneContract.TimeZonesEntry.DIFF_CUSTOM):
+                // TODO: get and display time in TextView
+                holder.clockTv.setText("55:55");
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid view type, value of " + mView);
+        }
     }
 
     /**
