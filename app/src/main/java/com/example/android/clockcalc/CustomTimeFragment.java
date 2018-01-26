@@ -27,9 +27,12 @@ import java.util.TimeZone;
 
 public class CustomTimeFragment extends Fragment implements
         TimeZonePickerFragment.DialogTimeZoneListener,
+        TimePickerFragment.DialogTimeListener,
         LoaderManager.LoaderCallbacks<Cursor>{
 
     private static final String TAG = "CustomTimeFragment";
+    private static final String TAG_TIME_PICKER = "timePicker";
+    private static final String TAG_TIME_ZONE_PICKER = "timeZonePicker";
 
     private static final int DB_LOADER = 1;
 
@@ -53,9 +56,6 @@ public class CustomTimeFragment extends Fragment implements
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_custom, container, false);
-
-
-        /////////////////
 
         sourceDateTv = rootView.findViewById(R.id.sourceDate);
         sourceDisplayNameTv = rootView.findViewById(R.id.sourceDisplayName);
@@ -117,7 +117,7 @@ public class CustomTimeFragment extends Fragment implements
         });
         getLoaderManager().initLoader(DB_LOADER, null, this);
 
-        /////////////////
+        setClickListeners();
 
         return rootView;
     }
@@ -155,6 +155,11 @@ public class CustomTimeFragment extends Fragment implements
         insertTimeZoneInDb(timeZoneId);
     }
 
+    @Override
+    public void timeSet(String time) {
+        sourceTime.setText(time);
+    }
+
     private void setLocalTimeZoneInfoInUi (){
         String id = mSourceTimeZone.getID();
         String displayName = mSourceTimeZone.getDisplayName(false, TimeZone.SHORT);
@@ -168,10 +173,16 @@ public class CustomTimeFragment extends Fragment implements
         sourceDisplayNameTv.setText(displayName);
     }
 
-    public void showTimeZonePickerDialog(View v) {
+    private void showTimeZonePickerDialog(View v) {
         TimeZonePickerFragment timeZonePicker = new TimeZonePickerFragment();
-        timeZonePicker.show(getActivity().getSupportFragmentManager(), "timeZonePicker");
+        timeZonePicker.show(getActivity().getSupportFragmentManager(), TAG_TIME_ZONE_PICKER);
         timeZonePicker.setTimeZoneListener(this);
+    }
+
+    private void showTimePickerDialog(View v){
+        TimePickerFragment timePicker = new TimePickerFragment();
+        timePicker.show(getActivity().getSupportFragmentManager(), TAG_TIME_PICKER);
+        timePicker.setTimeListener(this);
     }
 
     private void insertTimeZoneInDb(String timeZoneId){
@@ -183,5 +194,14 @@ public class CustomTimeFragment extends Fragment implements
                 .CONTENT_URI, values);
 
         getLoaderManager().restartLoader(DB_LOADER, null, this);
+    }
+
+    private void setClickListeners (){
+        sourceTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showTimePickerDialog(view);
+            }
+        });
     }
 }
