@@ -1,7 +1,10 @@
 package com.example.android.clockcalc;
 
+import android.app.ActionBar;
 import android.content.ContentValues;
 import android.database.Cursor;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -12,6 +15,7 @@ import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.text.format.DateUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -156,8 +160,12 @@ public class CustomTimeFragment extends Fragment implements
     }
 
     @Override
-    public void timeSet(String time) {
-        sourceTime.setText(time);
+    public void timeSet(long time) {
+        int flags = DateUtils.FORMAT_SHOW_TIME;
+
+        String timeString = DateUtils.formatDateTime(getContext(), time, flags);
+
+        sourceTime.setText(timeString);
     }
 
     private void setLocalTimeZoneInfoInUi (){

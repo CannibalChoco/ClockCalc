@@ -23,7 +23,7 @@ public class TimePickerFragment extends DialogFragment
     }
 
     public interface DialogTimeListener{
-        void timeSet(String time);
+        void timeSet(long time);
     }
 
     DialogTimeListener listener;
@@ -47,8 +47,12 @@ public class TimePickerFragment extends DialogFragment
 
     @Override
     public void onTimeSet(TimePicker view, int hour, int minute) {
-        Locale locale = Locale.getDefault();
-        String time = String.format(locale, "%02d:%02d", hour, minute);
+        Calendar c = Calendar.getInstance();
+        c.set(Calendar.HOUR_OF_DAY, hour);
+        c.set(Calendar.MINUTE, minute);
+
+        long time = c.getTimeInMillis();
+
 
         listener.timeSet(time);
     }
