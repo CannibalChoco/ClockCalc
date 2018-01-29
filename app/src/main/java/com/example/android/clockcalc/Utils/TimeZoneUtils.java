@@ -1,5 +1,9 @@
 package com.example.android.clockcalc.Utils;
 
+import android.content.ContentValues;
+import android.content.Context;
+import android.graphics.Color;
+import android.text.format.DateUtils;
 import android.util.Log;
 
 import java.text.ParseException;
@@ -86,5 +90,12 @@ public class TimeZoneUtils {
         return timeFormat.format(destTimeZone.getTime());
     }
 
+    /**
+     * Format time in miliseconds into a String
+     */
+    public static String getFormattedTime (long milis, Context context){
+        int flags = DateUtils.FORMAT_SHOW_TIME;
+        return DateUtils.formatDateTime(context, milis, flags);
+    }
 
 }

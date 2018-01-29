@@ -2,6 +2,7 @@ package com.example.android.clockcalc;
 
 import android.app.ActionBar;
 import android.content.ContentValues;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -26,6 +27,7 @@ import com.example.android.clockcalc.Data.TimeZoneContract;
 import com.example.android.clockcalc.Utils.TimeZoneUtils;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.TimeZone;
 
 
@@ -33,6 +35,12 @@ public class CustomTimeFragment extends Fragment implements
         TimeZonePickerFragment.DialogTimeZoneListener,
         TimePickerFragment.DialogTimeListener,
         LoaderManager.LoaderCallbacks<Cursor>{
+
+    // shared preferences
+    private static final String PREFS_CLOCK_CALC = "ClockCalcPrefs";
+
+    private static final String PREFS_TIME_IN_MILIS = "timeInMilis";
+    private long timeInMilis;
 
     private static final String TAG = "CustomTimeFragment";
     private static final String TAG_TIME_PICKER = "timePicker";
@@ -78,6 +86,11 @@ public class CustomTimeFragment extends Fragment implements
         mSourceTimeZone = TimeZone.getDefault();
 
         mSourceFormat.setTimeZone(mSourceTimeZone);
+
+        // restore preferences
+        SharedPreferences settings = getActivity().getSharedPreferences(PREFS_CLOCK_CALC, 0);
+        timeInMilis = settings.getLong(PREFS_TIME_IN_MILIS, System.currentTimeMillis());
+
         setLocalTimeZoneInfoInUi();
 
         /*
@@ -127,6 +140,17 @@ public class CustomTimeFragment extends Fragment implements
     }
 
     @Override
+    public void onStop() {
+        super.onStop();
+
+        SharedPreferences settings = getActivity().getSharedPreferences(PREFS_CLOCK_CALC, 0);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putLong(PREFS_TIME_IN_MILIS, timeInMilis);
+
+        editor.commit();
+    }
+
+    @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         String[] projection = new String[]{
                 TimeZoneContract.TimeZonesEntry._ID,
@@ -161,11 +185,9 @@ public class CustomTimeFragment extends Fragment implements
 
     @Override
     public void timeSet(long time) {
-        int flags = DateUtils.FORMAT_SHOW_TIME;
+        timeInMilis = time;
 
-        String timeString = DateUtils.formatDateTime(getContext(), time, flags);
-
-        sourceTime.setText(timeString);
+        sourceTime.setText(TimeZoneUtils.getFormattedTime(time, getContext()));
     }
 
     private void setLocalTimeZoneInfoInUi (){
@@ -175,7 +197,7 @@ public class CustomTimeFragment extends Fragment implements
 
         // TODO: display time in TextView
         //sourceTime.setTimeZone(id);
-        sourceTime.setText("55:55");
+        sourceTime.setText(TimeZoneUtils.getFormattedTime(timeInMilis, getContext()));
 
         sourceTimeZoneIdTv.setText(id);
         sourceDisplayNameTv.setText(displayName);
