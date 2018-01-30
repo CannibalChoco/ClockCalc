@@ -13,7 +13,6 @@ import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -45,8 +44,8 @@ public class CustomTimeFragment extends Fragment implements
     private static final int DB_LOADER = 1;
 
     private TimeZone sourceTimeZone;
-
-    Calendar sourceCalendar;
+    private Calendar sourceCalendar;
+    private String sourceTimeString;
 
     private TimeZoneCursorAdapter cursorAdapter;
 
@@ -83,6 +82,8 @@ public class CustomTimeFragment extends Fragment implements
         // set up source time zone calendar object
         sourceCalendar = Calendar.getInstance(sourceTimeZone);
         sourceCalendar.setTimeInMillis(timeInMilis);
+
+        sourceTimeString = TimeZoneUtils.getFormattedTime(timeInMilis, sourceTimeZone);
 
         cursorAdapter = new TimeZoneCursorAdapter(getActivity(), TimeZoneContract.TimeZonesEntry.DIFF_CUSTOM, timeInMilis);
         recyclerView.setAdapter(cursorAdapter);
@@ -171,12 +172,10 @@ public class CustomTimeFragment extends Fragment implements
     @Override
     public void timeZoneSet(String timeZoneId, boolean isSource) {
         if (isSource){
-            sourceTimeZoneId = timeZoneId;
-            sourceTimeZone = TimeZone.getTimeZone(timeZoneId);
-            sourceCalendar.setTimeZone(sourceTimeZone);
-
+            updateTimeZone(timeZoneId);
+            updateTimeMilis();
             setLocalTimeZoneInfoInUi();
-
+            cursorAdapter.updateTime(timeInMilis);
             cursorAdapter.notifyDataSetChanged();
 
         } else {
@@ -184,27 +183,46 @@ public class CustomTimeFragment extends Fragment implements
         }
     }
 
-    // TODO: fix time string 12:0 ==> 12:00
     @Override
     public void timeSet(long time) {
         timeInMilis = time;
         sourceCalendar.setTimeInMillis(time);
-        int hour = sourceCalendar.get(Calendar.HOUR_OF_DAY);
-        int minute = sourceCalendar.get(Calendar.MINUTE);
-        String timeString = "" + hour + ":" + minute;
 
-        sourceTime.setText(timeString);
+        sourceTimeString = TimeZoneUtils.getFormattedTime(time, sourceTimeZone);
+
+        sourceTime.setText(sourceTimeString);
 
         // TODO: update time only, instead of updating all views?
         cursorAdapter.updateTime(timeInMilis);
         cursorAdapter.notifyDataSetChanged();
     }
 
+    private void updateTimeMilis (){
+        String[] hoursAndMinutes = sourceTimeString.split(":");
+
+        int hour = Integer.valueOf(hoursAndMinutes[0]);
+        int minute = Integer.valueOf(hoursAndMinutes[1]);
+
+        Calendar c = Calendar.getInstance(sourceTimeZone);
+        c.set(Calendar.HOUR_OF_DAY, hour);
+        c.set(Calendar.MINUTE, minute);
+
+        timeInMilis = c.getTimeInMillis();
+
+        sourceCalendar.setTimeInMillis(timeInMilis);
+    }
+
+    private void updateTimeZone(String timeZoneId){
+        sourceTimeZoneId = timeZoneId;
+        sourceTimeZone = TimeZone.getTimeZone(timeZoneId);
+        sourceCalendar.setTimeZone(sourceTimeZone);
+    }
+
     private void setLocalTimeZoneInfoInUi (){
         String displayName = sourceTimeZone.getDisplayName(false, TimeZone.SHORT);
         sourceDateTv.setText(TimeZoneUtils.getCurrentDate(sourceTimeZone));
 
-        sourceTime.setText(TimeZoneUtils.getFormattedTime(timeInMilis, getContext()));
+        sourceTime.setText(TimeZoneUtils.getFormattedTime(timeInMilis, sourceTimeZone));
 
         sourceTimeZoneIdTv.setText(sourceTimeZoneId);
         sourceDisplayNameTv.setText(displayName);
@@ -229,6 +247,10 @@ public class CustomTimeFragment extends Fragment implements
         timePicker.show(getActivity().getSupportFragmentManager(), TAG_TIME_PICKER);
         timePicker.setTimeListener(this);
     }
+
+//    private static long getUpdatedTime (){
+//        Calendar c = Calendar.getInstance();
+//    }
 
     private void insertTimeZoneInDb(String timeZoneId){
         ContentValues values = new ContentValues();
@@ -270,36 +292,5 @@ public class CustomTimeFragment extends Fragment implements
                 showTimeZonePickerDialog(view, true);
             }
         });
-    }
-
-    private void logMiliseconds(){
-        long utcNowMillis = System.currentTimeMillis();
-        Log.i("INFO_MILIS", "utcNowMillis: " + String.valueOf(utcNowMillis));
-        Log.i("INFO_MILIS", "utcNowMillis: " + TimeZoneUtils.getFormattedTime(utcNowMillis, getContext()));
-
-        /*
-         * This TimeZone represents the device's current time zone. It provides us with a means
-         * of acquiring the offset for local time from a UTC time stamp.
-         */
-        TimeZone currentTimeZone = TimeZone.getDefault();
-
-        /*
-         * The getOffset method returns the number of milliseconds to add to UTC time to get the
-         * elapsed time since the epoch for our current time zone. We pass the current UTC time
-         * into this method so it can determine changes to account for daylight savings time.
-         */
-        long gmtOffsetMillis = currentTimeZone.getOffset(utcNowMillis);
-        Log.i("INFO_MILIS", "gmtOffsetMillis: " + String.valueOf(gmtOffsetMillis));
-        Log.i("INFO_MILIS", "gmtOffsetMillis: " + TimeZoneUtils.getFormattedTime(gmtOffsetMillis, getContext()));
-
-        /*
-         * UTC time is measured in milliseconds from January 1, 1970 at midnight from the GMT
-         * time zone. Depending on your time zone, the time since January 1, 1970 at midnight (GMT)
-         * will be greater or smaller. This variable represents the number of milliseconds since
-         * January 1, 1970 (GMT) time.
-         */
-        long timeSinceEpochLocalTimeMillis = utcNowMillis + gmtOffsetMillis;
-        Log.i("INFO_MILIS", "timeSinceEpochLocalTimeMillis: " + String.valueOf(timeSinceEpochLocalTimeMillis));
-        Log.i("INFO_MILIS", "timeSinceEpochLocalTimeMillis: " + TimeZoneUtils.getFormattedTime(timeSinceEpochLocalTimeMillis, getContext()));
     }
 }

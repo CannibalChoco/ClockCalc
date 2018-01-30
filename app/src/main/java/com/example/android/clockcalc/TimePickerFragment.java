@@ -44,7 +44,7 @@ public class TimePickerFragment extends DialogFragment
         timeZoneId = bundle.getString(TIME_ZONE_ID);
 
         // Use the current time as the default values for the picker
-        final Calendar c = Calendar.getInstance(TimeZone.getTimeZone(timeZoneId));
+        final Calendar c = Calendar.getInstance();
         int hour = c.get(Calendar.HOUR_OF_DAY);
         int minute = c.get(Calendar.MINUTE);
 

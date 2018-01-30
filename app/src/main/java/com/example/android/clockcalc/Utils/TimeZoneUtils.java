@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.Locale;
 import java.util.TimeZone;
 
 /**
@@ -64,9 +65,15 @@ public class TimeZoneUtils {
     /**
      * Format time in miliseconds into a String
      */
-    public static String getFormattedTime (long milis, Context context){
-        int flags = DateUtils.FORMAT_SHOW_TIME;
-        return DateUtils.formatDateTime(context, milis, flags);
+    public static String getFormattedTime (long milis, TimeZone tz){
+        Calendar c = Calendar.getInstance(tz);
+        c.setTimeInMillis(milis);
+        int hour = c.get(Calendar.HOUR_OF_DAY);
+        int minute = c.get(Calendar.MINUTE);
+        return String.format(Locale.getDefault(), "%02d:%02d", hour, minute);
+
+//        int flags = DateUtils.FORMAT_SHOW_TIME;
+//        return DateUtils.formatDateTime(context, milis, flags);
     }
 
     /**
