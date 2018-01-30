@@ -20,9 +20,11 @@ public class TimeZonePickerFragment extends DialogFragment implements TimeZoneAd
     RecyclerView recyclerView;
     TimeZoneAdapter adapter;
 
+    public static final String IS_SOURCE = "isSource";
+    boolean isSource;
 
     public interface DialogTimeZoneListener{
-        void timeZoneSet(String timeZoneId);
+        void timeZoneSet(String timeZoneId, boolean isSource);
     }
 
     DialogTimeZoneListener listener;
@@ -35,6 +37,9 @@ public class TimeZonePickerFragment extends DialogFragment implements TimeZoneAd
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.time_zone_picker_view, container);
+
+        Bundle bundle = getArguments();
+        isSource = bundle.getBoolean(IS_SOURCE);
 
         recyclerView = rootView.findViewById(R.id.recyclerViewTimeZonePicker);
         recyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
@@ -49,7 +54,7 @@ public class TimeZonePickerFragment extends DialogFragment implements TimeZoneAd
 
     @Override
     public void onClick(String selectedTimeZone) {
-        listener.timeZoneSet(selectedTimeZone);
+        listener.timeZoneSet(selectedTimeZone, isSource);
         dismiss();
     }
 }

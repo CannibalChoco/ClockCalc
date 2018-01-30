@@ -32,19 +32,8 @@ public class TimeZoneUtils {
 
     private static final String DEFAULT_DATETIME_FORMAT = "dd/MM/yyyy HH:mm";
     private static final String DEFAULT_DATE_FORMAT = "dd/MM/yyyy";
+    private static final String DEFAULT_TIME_FORMAT = "HH:mm";
 
-    /**
-     * get current date and time from calendar
-     * @return formatted datetime String
-     */
-    public static String getCurrentDateTime (TimeZone timeZone){
-        SimpleDateFormat sdf = new SimpleDateFormat(DEFAULT_DATETIME_FORMAT);
-        sdf.setTimeZone(timeZone);
-        Calendar c = Calendar.getInstance(timeZone);
-        String formatted = sdf.format(c.getTime());
-
-        return formatted;
-    }
 
     /**
      * get current date from calendar
@@ -59,35 +48,17 @@ public class TimeZoneUtils {
         return formatted;
     }
 
-    /**
-     * Get DateTime from custom time
-     * @param sourceDateTime source datetime String
-     * @return formatted date converted to destination time zone
-     */
-    public static String getDestinationDateTime(String sourceDateTime, SimpleDateFormat timeFormat,
-                                                TimeZone destinationTimeZone) {
-        try {
-            Date date = timeFormat.parse(sourceDateTime);
-            SimpleDateFormat destFormat = timeFormat;
-            destFormat.setTimeZone(destinationTimeZone);
+    public static String getFormattedDestTime (TimeZone timeZone,
+                                               long time){
+        SimpleDateFormat sdf = new SimpleDateFormat(DEFAULT_TIME_FORMAT);
+        sdf.setTimeZone(timeZone);
 
-            Log.v("Destination DateTime", destFormat.format(date));
-            return destFormat.format(date);
+        Calendar c = Calendar.getInstance(timeZone);
+        c.setTimeInMillis(time);
 
+        String formatted = sdf.format(c.getTime());
 
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-
-        return null;
-    }
-
-    public static String convertTimeToDestTimeZone (int timeInMilis, String destId,
-                                                    SimpleDateFormat timeFormat){
-        Calendar destTimeZone = new GregorianCalendar(TimeZone.getTimeZone(destId));
-        destTimeZone.setTimeInMillis(timeInMilis);
-
-        return timeFormat.format(destTimeZone.getTime());
+        return formatted;
     }
 
     /**
@@ -96,6 +67,19 @@ public class TimeZoneUtils {
     public static String getFormattedTime (long milis, Context context){
         int flags = DateUtils.FORMAT_SHOW_TIME;
         return DateUtils.formatDateTime(context, milis, flags);
+    }
+
+    /**
+     * get current date and time from calendar
+     * @return formatted datetime String
+     */
+    public static String getCurrentDateTime (TimeZone timeZone){
+        SimpleDateFormat sdf = new SimpleDateFormat(DEFAULT_DATETIME_FORMAT);
+        sdf.setTimeZone(timeZone);
+        Calendar c = Calendar.getInstance(timeZone);
+        String formatted = sdf.format(c.getTime());
+
+        return formatted;
     }
 
 }

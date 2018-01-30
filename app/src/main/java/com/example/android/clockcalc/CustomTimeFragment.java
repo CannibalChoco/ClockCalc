@@ -1,11 +1,8 @@
 package com.example.android.clockcalc;
 
-import android.app.ActionBar;
 import android.content.ContentValues;
 import android.content.SharedPreferences;
 import android.database.Cursor;
-import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -16,21 +13,19 @@ import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
-import android.text.format.DateUtils;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextClock;
 import android.widget.TextView;
 
 import com.example.android.clockcalc.Data.TimeZoneContract;
 import com.example.android.clockcalc.Utils.TimeZoneUtils;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import java.util.Calendar;
 import java.util.TimeZone;
 
-
+// TODO: fix time displaying
 public class CustomTimeFragment extends Fragment implements
         TimeZonePickerFragment.DialogTimeZoneListener,
         TimePickerFragment.DialogTimeListener,
@@ -38,9 +33,10 @@ public class CustomTimeFragment extends Fragment implements
 
     // shared preferences
     private static final String PREFS_CLOCK_CALC = "ClockCalcPrefs";
-
     private static final String PREFS_TIME_IN_MILIS = "timeInMilis";
-    private long timeInMilis;
+    private static final String PREFS_TIME_ZONE_ID = "timeZoneId";
+    public long timeInMilis;
+    private String sourceTimeZoneId;
 
     private static final String TAG = "CustomTimeFragment";
     private static final String TAG_TIME_PICKER = "timePicker";
@@ -48,10 +44,9 @@ public class CustomTimeFragment extends Fragment implements
 
     private static final int DB_LOADER = 1;
 
-    private static final String DEFAULT_DATETIME_FORMAT = "dd/MM/yyyy HH:mm";
+    private TimeZone sourceTimeZone;
 
-    private SimpleDateFormat mSourceFormat;
-    private TimeZone mSourceTimeZone;
+    Calendar sourceCalendar;
 
     private TimeZoneCursorAdapter cursorAdapter;
 
@@ -59,6 +54,7 @@ public class CustomTimeFragment extends Fragment implements
     private TextView sourceTimeZoneIdTv;
     private TextView sourceDisplayNameTv;
     private TextView sourceTime;
+    private FloatingActionButton fab;
 
     RecyclerView recyclerView;
 
@@ -73,23 +69,25 @@ public class CustomTimeFragment extends Fragment implements
         sourceDisplayNameTv = rootView.findViewById(R.id.sourceDisplayName);
         sourceTimeZoneIdTv = rootView.findViewById(R.id.sourceTimeZoneId);
         sourceTime = rootView.findViewById(R.id.sourceTime);
+        fab = rootView.findViewById(R.id.fab);
 
         recyclerView = rootView.findViewById(R.id.recyclerViewCurrent);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        cursorAdapter = new TimeZoneCursorAdapter(getActivity(), TimeZoneContract.TimeZonesEntry.DIFF_CUSTOM);
-        recyclerView.setAdapter(cursorAdapter);
-
-        // simple format for the default time
-        mSourceFormat = new SimpleDateFormat(DEFAULT_DATETIME_FORMAT);
-        // local time zone
-        mSourceTimeZone = TimeZone.getDefault();
-
-        mSourceFormat.setTimeZone(mSourceTimeZone);
-
         // restore preferences
         SharedPreferences settings = getActivity().getSharedPreferences(PREFS_CLOCK_CALC, 0);
         timeInMilis = settings.getLong(PREFS_TIME_IN_MILIS, System.currentTimeMillis());
+        sourceTimeZoneId = settings.getString(PREFS_TIME_ZONE_ID, TimeZone.getDefault().getID());
+        sourceTimeZone = TimeZone.getTimeZone(sourceTimeZoneId);
+
+        // set up source time zone calendar object
+        sourceCalendar = Calendar.getInstance(sourceTimeZone);
+        sourceCalendar.setTimeInMillis(timeInMilis);
+
+        cursorAdapter = new TimeZoneCursorAdapter(getActivity(), TimeZoneContract.TimeZonesEntry.DIFF_CUSTOM, timeInMilis);
+        recyclerView.setAdapter(cursorAdapter);
+
+        // simple format for the default time
 
         setLocalTimeZoneInfoInUi();
 
@@ -98,7 +96,6 @@ public class CustomTimeFragment extends Fragment implements
          An ItemTouchHelper enables touch behavior (like swipe and move) on each ViewHolder,
          and uses callbacks to signal when a user is performing these actions.
          */
-
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,
                 ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
@@ -125,15 +122,7 @@ public class CustomTimeFragment extends Fragment implements
             }
         }).attachToRecyclerView(recyclerView);
 
-        FloatingActionButton fab = rootView.findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                showTimeZonePickerDialog(view);
-            }
-        });
         getLoaderManager().initLoader(DB_LOADER, null, this);
-
         setClickListeners();
 
         return rootView;
@@ -146,6 +135,7 @@ public class CustomTimeFragment extends Fragment implements
         SharedPreferences settings = getActivity().getSharedPreferences(PREFS_CLOCK_CALC, 0);
         SharedPreferences.Editor editor = settings.edit();
         editor.putLong(PREFS_TIME_IN_MILIS, timeInMilis);
+        editor.putString(PREFS_TIME_ZONE_ID, sourceTimeZoneId);
 
         editor.commit();
     }
@@ -179,38 +169,63 @@ public class CustomTimeFragment extends Fragment implements
     }
 
     @Override
-    public void timeZoneSet(String timeZoneId) {
-        insertTimeZoneInDb(timeZoneId);
+    public void timeZoneSet(String timeZoneId, boolean isSource) {
+        if (isSource){
+            sourceTimeZoneId = timeZoneId;
+            sourceTimeZone = TimeZone.getTimeZone(timeZoneId);
+            sourceCalendar.setTimeZone(sourceTimeZone);
+
+            setLocalTimeZoneInfoInUi();
+
+            cursorAdapter.notifyDataSetChanged();
+
+        } else {
+            insertTimeZoneInDb(timeZoneId);
+        }
     }
 
+    // TODO: fix time string 12:0 ==> 12:00
     @Override
     public void timeSet(long time) {
         timeInMilis = time;
+        sourceCalendar.setTimeInMillis(time);
+        int hour = sourceCalendar.get(Calendar.HOUR_OF_DAY);
+        int minute = sourceCalendar.get(Calendar.MINUTE);
+        String timeString = "" + hour + ":" + minute;
 
-        sourceTime.setText(TimeZoneUtils.getFormattedTime(time, getContext()));
+        sourceTime.setText(timeString);
+
+        // TODO: update time only, instead of updating all views?
+        cursorAdapter.updateTime(timeInMilis);
+        cursorAdapter.notifyDataSetChanged();
     }
 
     private void setLocalTimeZoneInfoInUi (){
-        String id = mSourceTimeZone.getID();
-        String displayName = mSourceTimeZone.getDisplayName(false, TimeZone.SHORT);
-        sourceDateTv.setText(TimeZoneUtils.getCurrentDate(mSourceTimeZone));
+        String displayName = sourceTimeZone.getDisplayName(false, TimeZone.SHORT);
+        sourceDateTv.setText(TimeZoneUtils.getCurrentDate(sourceTimeZone));
 
-        // TODO: display time in TextView
-        //sourceTime.setTimeZone(id);
         sourceTime.setText(TimeZoneUtils.getFormattedTime(timeInMilis, getContext()));
 
-        sourceTimeZoneIdTv.setText(id);
+        sourceTimeZoneIdTv.setText(sourceTimeZoneId);
         sourceDisplayNameTv.setText(displayName);
     }
 
-    private void showTimeZonePickerDialog(View v) {
+    private void showTimeZonePickerDialog(View v, boolean isSource) {
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(TimeZonePickerFragment.IS_SOURCE, isSource);
+
         TimeZonePickerFragment timeZonePicker = new TimeZonePickerFragment();
+        timeZonePicker.setArguments(bundle);
         timeZonePicker.show(getActivity().getSupportFragmentManager(), TAG_TIME_ZONE_PICKER);
         timeZonePicker.setTimeZoneListener(this);
     }
 
     private void showTimePickerDialog(View v){
+        Bundle bundle = new Bundle();
+        bundle.putString(TimePickerFragment.TIME_ZONE_ID, sourceTimeZoneId);
+
         TimePickerFragment timePicker = new TimePickerFragment();
+        timePicker.setArguments(bundle);
         timePicker.show(getActivity().getSupportFragmentManager(), TAG_TIME_PICKER);
         timePicker.setTimeListener(this);
     }
@@ -227,11 +242,64 @@ public class CustomTimeFragment extends Fragment implements
     }
 
     private void setClickListeners (){
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showTimeZonePickerDialog(view, false);
+            }
+        });
+
         sourceTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 showTimePickerDialog(view);
             }
         });
+
+        sourceDisplayNameTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showTimeZonePickerDialog(view, true);
+            }
+        });
+
+        sourceTimeZoneIdTv.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showTimeZonePickerDialog(view, true);
+            }
+        });
+    }
+
+    private void logMiliseconds(){
+        long utcNowMillis = System.currentTimeMillis();
+        Log.i("INFO_MILIS", "utcNowMillis: " + String.valueOf(utcNowMillis));
+        Log.i("INFO_MILIS", "utcNowMillis: " + TimeZoneUtils.getFormattedTime(utcNowMillis, getContext()));
+
+        /*
+         * This TimeZone represents the device's current time zone. It provides us with a means
+         * of acquiring the offset for local time from a UTC time stamp.
+         */
+        TimeZone currentTimeZone = TimeZone.getDefault();
+
+        /*
+         * The getOffset method returns the number of milliseconds to add to UTC time to get the
+         * elapsed time since the epoch for our current time zone. We pass the current UTC time
+         * into this method so it can determine changes to account for daylight savings time.
+         */
+        long gmtOffsetMillis = currentTimeZone.getOffset(utcNowMillis);
+        Log.i("INFO_MILIS", "gmtOffsetMillis: " + String.valueOf(gmtOffsetMillis));
+        Log.i("INFO_MILIS", "gmtOffsetMillis: " + TimeZoneUtils.getFormattedTime(gmtOffsetMillis, getContext()));
+
+        /*
+         * UTC time is measured in milliseconds from January 1, 1970 at midnight from the GMT
+         * time zone. Depending on your time zone, the time since January 1, 1970 at midnight (GMT)
+         * will be greater or smaller. This variable represents the number of milliseconds since
+         * January 1, 1970 (GMT) time.
+         */
+        long timeSinceEpochLocalTimeMillis = utcNowMillis + gmtOffsetMillis;
+        Log.i("INFO_MILIS", "timeSinceEpochLocalTimeMillis: " + String.valueOf(timeSinceEpochLocalTimeMillis));
+        Log.i("INFO_MILIS", "timeSinceEpochLocalTimeMillis: " + TimeZoneUtils.getFormattedTime(timeSinceEpochLocalTimeMillis, getContext()));
     }
 }

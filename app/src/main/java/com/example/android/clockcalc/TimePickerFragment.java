@@ -10,6 +10,7 @@ import android.widget.TimePicker;
 
 import java.util.Calendar;
 import java.util.Locale;
+import java.util.TimeZone;
 
 /**
  * Created by Emils on 15.12.2017.
@@ -17,6 +18,9 @@ import java.util.Locale;
 
 public class TimePickerFragment extends DialogFragment
         implements TimePickerDialog.OnTimeSetListener {
+
+    public static final String TIME_ZONE_ID = "timeZoneId";
+    private String timeZoneId;
 
     public TimePickerFragment(){
 
@@ -35,8 +39,12 @@ public class TimePickerFragment extends DialogFragment
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+
+        Bundle bundle = getArguments();
+        timeZoneId = bundle.getString(TIME_ZONE_ID);
+
         // Use the current time as the default values for the picker
-        final Calendar c = Calendar.getInstance();
+        final Calendar c = Calendar.getInstance(TimeZone.getTimeZone(timeZoneId));
         int hour = c.get(Calendar.HOUR_OF_DAY);
         int minute = c.get(Calendar.MINUTE);
 
@@ -47,7 +55,7 @@ public class TimePickerFragment extends DialogFragment
 
     @Override
     public void onTimeSet(TimePicker view, int hour, int minute) {
-        Calendar c = Calendar.getInstance();
+        Calendar c = Calendar.getInstance(TimeZone.getTimeZone(timeZoneId));
         c.set(Calendar.HOUR_OF_DAY, hour);
         c.set(Calendar.MINUTE, minute);
 

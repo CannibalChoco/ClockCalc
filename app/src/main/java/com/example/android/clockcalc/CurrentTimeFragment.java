@@ -33,9 +33,6 @@ public class CurrentTimeFragment extends Fragment implements
 
     private static final int DB_LOADER = 1;
 
-    private static final String DEFAULT_DATETIME_FORMAT = "dd/MM/yyyy HH:mm";
-
-    private SimpleDateFormat mSourceFormat;
     private TimeZone mSourceTimeZone;
 
     private TimeZoneCursorAdapter cursorAdapter;
@@ -65,12 +62,9 @@ public class CurrentTimeFragment extends Fragment implements
         cursorAdapter = new TimeZoneCursorAdapter(getActivity(), TimeZoneContract.TimeZonesEntry.DIFF_CURRENT);
         recyclerView.setAdapter(cursorAdapter);
 
-        // simple format for the default time
-        mSourceFormat = new SimpleDateFormat(DEFAULT_DATETIME_FORMAT);
         // local time zone
         mSourceTimeZone = TimeZone.getDefault();
 
-        mSourceFormat.setTimeZone(mSourceTimeZone);
         setLocalTimeZoneInfoInUi();
 
         /*
@@ -78,7 +72,6 @@ public class CurrentTimeFragment extends Fragment implements
          An ItemTouchHelper enables touch behavior (like swipe and move) on each ViewHolder,
          and uses callbacks to signal when a user is performing these actions.
          */
-
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,
                 ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
@@ -109,7 +102,7 @@ public class CurrentTimeFragment extends Fragment implements
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                showTimeZonePickerDialog(view);
+                showTimeZonePickerDialog(view, true);
             }
         });
         getLoaderManager().initLoader(DB_LOADER, null, this);
@@ -118,7 +111,7 @@ public class CurrentTimeFragment extends Fragment implements
     }
 
     @Override
-    public void timeZoneSet(String timeZoneId) {
+    public void timeZoneSet(String timeZoneId, boolean isCurrent) {
         insertTimeZoneInDb(timeZoneId);
     }
 
@@ -186,8 +179,12 @@ public class CurrentTimeFragment extends Fragment implements
         sourceDisplayNameTv.setText(displayName);
     }
 
-    public void showTimeZonePickerDialog(View v) {
+    public void showTimeZonePickerDialog(View v, boolean isSource) {
+        Bundle bundle = new Bundle();
+        bundle.putBoolean(TimeZonePickerFragment.IS_SOURCE, isSource);
+
         TimeZonePickerFragment timeZonePicker = new TimeZonePickerFragment();
+        timeZonePicker.setArguments(bundle);
         timeZonePicker.show(getActivity().getSupportFragmentManager(), "timeZonePicker");
         timeZonePicker.setTimeZoneListener(this);
     }
