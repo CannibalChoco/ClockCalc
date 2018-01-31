@@ -12,9 +12,9 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/colorPrimary"
-        app:tabTextColor="@color/colorAccent"
-        app:tabIndicatorColor="@android:color/white"
-        app:tabSelectedTextColor="@android:color/white"
+        app:tabTextColor="@color/colorTextLight"
+        app:tabIndicatorColor="@color/colorAccent"
+        app:tabSelectedTextColor="@color/colorAccent"
         app:tabMode="fixed" />
 
     <android.support.v4.view.ViewPager
