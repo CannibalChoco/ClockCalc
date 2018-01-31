@@ -27,6 +27,18 @@ public class SimpleFragmentPagerAdapter extends FragmentPagerAdapter {
     }
 
     @Override
+    public CharSequence getPageTitle(int position) {
+        switch(position) {
+            case 0:
+                return "current";
+            case 1:
+                return "custom";
+            default:
+                return null;
+        }
+    }
+
+    @Override
     public int getCount() {
         return 2;
     }

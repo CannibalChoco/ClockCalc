@@ -2,11 +2,14 @@ package com.example.android.clockcalc;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextClock;
 import android.widget.TextView;
 
@@ -60,6 +63,7 @@ public class TimeZoneCursorAdapter extends RecyclerView.Adapter<TimeZoneCursorAd
         TextView timeZoneId;
         TextView date;
         TextView displayName;
+        ImageView removeBtn;
 
         public TimeZoneViewHolder(View view) {
             super(view);
@@ -67,6 +71,7 @@ public class TimeZoneCursorAdapter extends RecyclerView.Adapter<TimeZoneCursorAd
             timeZoneId = view.findViewById(R.id.destTimeZoneId);
             date = view.findViewById(R.id.destDate);
             displayName = view.findViewById(R.id.destDisplayName);
+            removeBtn = view.findViewById(R.id.remove);
 
             switch (viewType) {
                 case (TimeZoneContract.TimeZonesEntry.DIFF_CURRENT):
@@ -78,7 +83,6 @@ public class TimeZoneCursorAdapter extends RecyclerView.Adapter<TimeZoneCursorAd
                 default:
                     throw new IllegalArgumentException("Invalid view type, value of " + viewType);
             }
-
         }
     }
 
@@ -104,7 +108,7 @@ public class TimeZoneCursorAdapter extends RecyclerView.Adapter<TimeZoneCursorAd
     }
 
     @Override
-    public void onBindViewHolder(TimeZoneViewHolder holder, int position) {
+    public void onBindViewHolder(final TimeZoneViewHolder holder, final int position) {
         /**
          * indexes  are the same in both tables.
          */
@@ -113,7 +117,7 @@ public class TimeZoneCursorAdapter extends RecyclerView.Adapter<TimeZoneCursorAd
 
         cursor.moveToPosition(position);
 
-        int rowId = cursor.getInt(_itIndex);
+        final int rowId = cursor.getInt(_itIndex);
         String id = cursor.getString(timeZoneIdColIndex);
         TimeZone tz= TimeZone.getTimeZone(id);
         String displayName = tz.getDisplayName(false, TimeZone.SHORT);
@@ -137,6 +141,21 @@ public class TimeZoneCursorAdapter extends RecyclerView.Adapter<TimeZoneCursorAd
             default:
                 throw new IllegalArgumentException("Invalid view type, value of " + viewType);
         }
+
+        holder.removeBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // delete from db
+                // Build appropriate uri with String row id appended
+                String stringId = Integer.toString(rowId);
+                Uri uri = TimeZoneContract.TimeZonesEntry.CONTENT_URI;
+                uri = uri.buildUpon().appendPath(stringId).build();
+                context.getContentResolver().delete(uri, null, null);
+
+                context.getContentResolver().notifyChange(uri, null);
+            }
+        });
+
     }
 
     /**

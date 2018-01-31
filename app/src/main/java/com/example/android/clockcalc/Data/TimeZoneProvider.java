@@ -73,7 +73,6 @@ public class TimeZoneProvider extends ContentProvider {
                         null,
                         null,
                         sortOrder);
-
                 break;
             case ID_TIMEZONE:
                  selection = TimeZoneContract.TimeZonesEntry._ID + "=?";
@@ -85,6 +84,8 @@ public class TimeZoneProvider extends ContentProvider {
             default:
                 throw new IllegalArgumentException("Cannot query unknown URI " + uri);
         }
+
+        cursor.setNotificationUri(getContext().getContentResolver(), uri);
 
         return cursor;
     }

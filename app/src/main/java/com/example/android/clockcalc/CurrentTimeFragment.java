@@ -16,6 +16,8 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextClock;
 import android.widget.TextView;
 
@@ -41,6 +43,7 @@ public class CurrentTimeFragment extends Fragment implements
     private TextView sourceTimeZoneIdTv;
     private TextView sourceDisplayNameTv;
     private TextClock sourceTime;
+    FloatingActionButton fab;
 
     RecyclerView recyclerView;
 
@@ -55,6 +58,7 @@ public class CurrentTimeFragment extends Fragment implements
         sourceDisplayNameTv = rootView.findViewById(R.id.sourceDisplayName);
         sourceTimeZoneIdTv = rootView.findViewById(R.id.sourceTimeZoneId);
         sourceTime = rootView.findViewById(R.id.sourceTime);
+        fab = rootView.findViewById(R.id.fab);
 
         recyclerView = rootView.findViewById(R.id.recyclerViewCurrent);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -67,38 +71,6 @@ public class CurrentTimeFragment extends Fragment implements
 
         setLocalTimeZoneInfoInUi();
 
-        /*
-         Add a touch helper to the RecyclerView to recognize when a user swipes to delete an item.
-         An ItemTouchHelper enables touch behavior (like swipe and move) on each ViewHolder,
-         and uses callbacks to signal when a user is performing these actions.
-         */
-        new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0,
-                ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
-            @Override
-            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-                return false;
-            }
-
-            // Called when a user swipes left or right on a ViewHolder
-            @Override
-            public void onSwiped(RecyclerView.ViewHolder viewHolder, int swipeDir) {
-                int id = (int) viewHolder.itemView.getTag();
-
-                // Build appropriate uri with String row id appended
-                String stringId = Integer.toString(id);
-                Uri uri = TimeZoneContract.TimeZonesEntry.CONTENT_URI;
-                uri = uri.buildUpon().appendPath(stringId).build();
-
-                // Delete a single row of data using a ContentResolver
-                getActivity().getContentResolver().delete(uri, null, null);
-
-                // Restart the loader to re-query for all tasks after a deletion
-                getLoaderManager().restartLoader(DB_LOADER, null, CurrentTimeFragment.this);
-
-            }
-        }).attachToRecyclerView(recyclerView);
-
-        FloatingActionButton fab = rootView.findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
