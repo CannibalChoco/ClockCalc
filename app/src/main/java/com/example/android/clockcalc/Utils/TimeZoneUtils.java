@@ -1,17 +1,12 @@
 package com.example.android.clockcalc.Utils;
 
-import android.content.ContentValues;
-import android.content.Context;
-import android.graphics.Color;
-import android.text.format.DateUtils;
 import android.util.Log;
 
-import java.text.ParseException;
+import com.example.android.clockcalc.Data.ClockCalcPreferences;
+import com.example.android.clockcalc.MainActivity;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.Locale;
 import java.util.TimeZone;
 
 /**
@@ -31,9 +26,9 @@ import java.util.TimeZone;
 
 public class TimeZoneUtils {
 
-    private static final String DEFAULT_DATETIME_FORMAT = "dd/MM/yyyy HH:mm";
     private static final String DEFAULT_DATE_FORMAT = "dd/MM/yyyy";
-    private static final String DEFAULT_TIME_FORMAT = "HH:mm";
+    public static final String TIME_FORMAT_24_H = "HH:mm";
+    public static final String TIME_FORMAT_12_H = "h:mm a";
 
 
     /**
@@ -49,9 +44,26 @@ public class TimeZoneUtils {
         return formatted;
     }
 
-    public static String getFormattedDestTime (TimeZone timeZone,
-                                               long time){
-        SimpleDateFormat sdf = new SimpleDateFormat(DEFAULT_TIME_FORMAT);
+    public static String getFormattedTime(TimeZone timeZone,
+                                          long time){
+        SimpleDateFormat sdf;
+        int format = MainActivity.prefTimeFormat;
+
+        switch (format){
+            case ClockCalcPreferences.PREFS_TIME_FORMAT_12_H:
+                sdf= new SimpleDateFormat(TIME_FORMAT_12_H);
+                Log.i("TEST PREFS", String.valueOf(TIME_FORMAT_12_H));
+                break;
+            case ClockCalcPreferences.PREFS_TIME_FORMAT_24_H:
+                sdf = new SimpleDateFormat(TIME_FORMAT_24_H);
+                Log.i("TEST PREFS", String.valueOf(TIME_FORMAT_24_H));
+                break;
+            default:
+                sdf = new SimpleDateFormat(TIME_FORMAT_24_H);
+                Log.i("TEST PREFS", String.valueOf(TIME_FORMAT_24_H));
+                break;
+        }
+
         sdf.setTimeZone(timeZone);
 
         Calendar c = Calendar.getInstance(timeZone);
@@ -61,32 +73,4 @@ public class TimeZoneUtils {
 
         return formatted;
     }
-
-    /**
-     * Format time in miliseconds into a String
-     */
-    public static String getFormattedTime (long milis, TimeZone tz){
-        Calendar c = Calendar.getInstance(tz);
-        c.setTimeInMillis(milis);
-        int hour = c.get(Calendar.HOUR_OF_DAY);
-        int minute = c.get(Calendar.MINUTE);
-        return String.format(Locale.getDefault(), "%02d:%02d", hour, minute);
-
-//        int flags = DateUtils.FORMAT_SHOW_TIME;
-//        return DateUtils.formatDateTime(context, milis, flags);
-    }
-
-    /**
-     * get current date and time from calendar
-     * @return formatted datetime String
-     */
-    public static String getCurrentDateTime (TimeZone timeZone){
-        SimpleDateFormat sdf = new SimpleDateFormat(DEFAULT_DATETIME_FORMAT);
-        sdf.setTimeZone(timeZone);
-        Calendar c = Calendar.getInstance(timeZone);
-        String formatted = sdf.format(c.getTime());
-
-        return formatted;
-    }
-
 }

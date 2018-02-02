@@ -12,29 +12,25 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 
+import com.example.android.clockcalc.Data.ClockCalcPreferences;
 import com.example.android.clockcalc.Data.TimeZoneContract;
 import com.example.android.clockcalc.Utils.TimeZoneUtils;
 
 import java.util.Calendar;
 import java.util.TimeZone;
 
-// TODO: fix time displaying
+// TODO: update time format when user changes preferences
 public class CustomTimeFragment extends Fragment implements
         TimeZonePickerFragment.DialogTimeZoneListener,
         TimePickerFragment.DialogTimeListener,
         LoaderManager.LoaderCallbacks<Cursor>{
 
-    // shared preferences
-    private static final String PREFS_CLOCK_CALC = "ClockCalcPrefs";
-    private static final String PREFS_TIME_IN_MILIS = "timeInMilis";
-    private static final String PREFS_TIME_ZONE_ID = "timeZoneId";
+    // shared settings
     public long timeInMilis;
     private String sourceTimeZoneId;
 
@@ -58,6 +54,8 @@ public class CustomTimeFragment extends Fragment implements
 
     RecyclerView recyclerView;
 
+    SharedPreferences settings;
+
     public CustomTimeFragment(){}
 
     @Override
@@ -74,17 +72,17 @@ public class CustomTimeFragment extends Fragment implements
         recyclerView = rootView.findViewById(R.id.recyclerViewCurrent);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        // restore preferences
-        SharedPreferences settings = getActivity().getSharedPreferences(PREFS_CLOCK_CALC, 0);
-        timeInMilis = settings.getLong(PREFS_TIME_IN_MILIS, System.currentTimeMillis());
-        sourceTimeZoneId = settings.getString(PREFS_TIME_ZONE_ID, TimeZone.getDefault().getID());
+        // restore settings
+        settings = getActivity().getSharedPreferences(ClockCalcPreferences.PREFS_CLOCK_CALC, 0);
+        timeInMilis = settings.getLong(ClockCalcPreferences.PREFS_TIME_IN_MILIS, System.currentTimeMillis());
+        sourceTimeZoneId = settings.getString(ClockCalcPreferences.PREFS_TIME_ZONE_ID, TimeZone.getDefault().getID());
         sourceTimeZone = TimeZone.getTimeZone(sourceTimeZoneId);
 
         // set up source time zone calendar object
         sourceCalendar = Calendar.getInstance(sourceTimeZone);
         sourceCalendar.setTimeInMillis(timeInMilis);
 
-        sourceTimeString = TimeZoneUtils.getFormattedTime(timeInMilis, sourceTimeZone);
+        sourceTimeString = TimeZoneUtils.getFormattedTime(sourceTimeZone, timeInMilis);
 
         cursorAdapter = new TimeZoneCursorAdapter(getActivity(), TimeZoneContract.TimeZonesEntry.DIFF_CUSTOM, timeInMilis);
         recyclerView.setAdapter(cursorAdapter);
@@ -99,16 +97,17 @@ public class CustomTimeFragment extends Fragment implements
         return rootView;
     }
 
+
     @Override
     public void onStop() {
-        super.onStop();
-
-        SharedPreferences settings = getActivity().getSharedPreferences(PREFS_CLOCK_CALC, 0);
         SharedPreferences.Editor editor = settings.edit();
-        editor.putLong(PREFS_TIME_IN_MILIS, timeInMilis);
-        editor.putString(PREFS_TIME_ZONE_ID, sourceTimeZoneId);
+        editor.putLong(ClockCalcPreferences.PREFS_TIME_IN_MILIS, timeInMilis);
+        editor.putString(ClockCalcPreferences.PREFS_TIME_ZONE_ID, sourceTimeZoneId);
 
+        editor.apply();
         editor.commit();
+
+        super.onStop();
     }
 
     @Override
@@ -158,7 +157,7 @@ public class CustomTimeFragment extends Fragment implements
         timeInMilis = time;
         sourceCalendar.setTimeInMillis(time);
 
-        sourceTimeString = TimeZoneUtils.getFormattedTime(time, sourceTimeZone);
+        sourceTimeString = TimeZoneUtils.getFormattedTime(sourceTimeZone, time);
 
         sourceTime.setText(sourceTimeString);
 
@@ -192,7 +191,7 @@ public class CustomTimeFragment extends Fragment implements
         String displayName = sourceTimeZone.getDisplayName(false, TimeZone.SHORT);
         sourceDateTv.setText(TimeZoneUtils.getCurrentDate(sourceTimeZone));
 
-        sourceTime.setText(TimeZoneUtils.getFormattedTime(timeInMilis, sourceTimeZone));
+        sourceTime.setText(TimeZoneUtils.getFormattedTime(sourceTimeZone, timeInMilis));
 
         sourceTimeZoneIdTv.setText(sourceTimeZoneId);
         sourceDisplayNameTv.setText(displayName);
@@ -217,10 +216,6 @@ public class CustomTimeFragment extends Fragment implements
         timePicker.show(getActivity().getSupportFragmentManager(), TAG_TIME_PICKER);
         timePicker.setTimeListener(this);
     }
-
-//    private static long getUpdatedTime (){
-//        Calendar c = Calendar.getInstance();
-//    }
 
     private void insertTimeZoneInDb(String timeZoneId){
         ContentValues values = new ContentValues();

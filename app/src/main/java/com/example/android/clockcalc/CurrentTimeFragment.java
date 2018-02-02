@@ -12,21 +12,20 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.TextClock;
 import android.widget.TextView;
 
 import com.example.android.clockcalc.Data.TimeZoneContract;
 import com.example.android.clockcalc.Utils.TimeZoneUtils;
 
-import java.text.SimpleDateFormat;
 import java.util.TimeZone;
 
+
+// TODO: update time format when user changes preferences
+// TODO: make it work if system time format set to 24h
 public class CurrentTimeFragment extends Fragment implements
         TimeZonePickerFragment.DialogTimeZoneListener,
         LoaderManager.LoaderCallbacks<Cursor>{

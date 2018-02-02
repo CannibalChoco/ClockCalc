@@ -3,16 +3,15 @@ package com.example.android.clockcalc;
 import android.content.Context;
 import android.database.Cursor;
 import android.net.Uri;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextClock;
 import android.widget.TextView;
 
+import com.example.android.clockcalc.Data.ClockCalcPreferences;
 import com.example.android.clockcalc.Data.TimeZoneContract;
 import com.example.android.clockcalc.Utils.TimeZoneUtils;
 
@@ -133,9 +132,14 @@ public class TimeZoneCursorAdapter extends RecyclerView.Adapter<TimeZoneCursorAd
         switch (viewType) {
             case (TimeZoneContract.TimeZonesEntry.DIFF_CURRENT):
                 holder.clockTc.setTimeZone(id);
+                if (MainActivity.prefTimeFormat == ClockCalcPreferences.PREFS_TIME_FORMAT_12_H){
+                    holder.clockTc.setFormat12Hour(TimeZoneUtils.TIME_FORMAT_12_H);
+                } else {
+                    holder.clockTc.setFormat12Hour(TimeZoneUtils.TIME_FORMAT_24_H);
+                }
                 break;
             case (TimeZoneContract.TimeZonesEntry.DIFF_CUSTOM):
-                String time = TimeZoneUtils.getFormattedDestTime(tz, this.time);
+                String time = TimeZoneUtils.getFormattedTime(tz, this.time);
                 holder.clockTv.setText(time);
                 break;
             default:
