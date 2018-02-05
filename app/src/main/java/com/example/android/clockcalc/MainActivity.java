@@ -44,7 +44,7 @@ public class MainActivity extends AppCompatActivity{
 
     @Override
     protected void onStop() {
-        editor.commit();
+        if (editor != null) editor.commit();
         super.onStop();
     }
 
