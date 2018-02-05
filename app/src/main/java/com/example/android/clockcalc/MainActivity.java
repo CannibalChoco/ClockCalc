@@ -5,7 +5,6 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -38,8 +37,6 @@ public class MainActivity extends AppCompatActivity{
         settings = getSharedPreferences(ClockCalcPreferences.PREFS_CLOCK_CALC, 0);
         prefTimeFormat = settings.getInt(ClockCalcPreferences.PREFS_TIME_FORMAT,
                 ClockCalcPreferences.PREFS_TIME_FORMAT_24_H);
-
-        Log.i("TEST PREFS", String.valueOf(prefTimeFormat));
     }
 
     @Override
@@ -65,8 +62,6 @@ public class MainActivity extends AppCompatActivity{
             editor.apply();
 
             prefTimeFormat = settings.getInt(ClockCalcPreferences.PREFS_TIME_FORMAT, 2);
-
-            Log.i("TEST PREFS", String.valueOf(prefTimeFormat));
 
             getContentResolver().notifyChange(TimeZoneContract.TimeZonesEntry.CONTENT_URI, null);
         }
