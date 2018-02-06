@@ -5,6 +5,7 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -41,7 +42,10 @@ public class MainActivity extends AppCompatActivity{
 
     @Override
     protected void onStop() {
-        if (editor != null) editor.commit();
+//        if (editor != null){
+//
+//        }
+
         super.onStop();
     }
 
@@ -56,12 +60,14 @@ public class MainActivity extends AppCompatActivity{
         int id = item.getItemId();
 
         if (id == R.id.action_hour_format){
-            editor = settings.edit();
-            editor.putInt(ClockCalcPreferences.PREFS_TIME_FORMAT,
-                    ClockCalcPreferences.toggleTimeFormat(prefTimeFormat));
-            editor.apply();
+            prefTimeFormat = ClockCalcPreferences.toggleTimeFormat(prefTimeFormat);
 
-            prefTimeFormat = settings.getInt(ClockCalcPreferences.PREFS_TIME_FORMAT, 2);
+            editor = settings.edit();
+            editor.putInt(ClockCalcPreferences.PREFS_TIME_FORMAT, prefTimeFormat);
+
+            editor.commit();
+
+            Log.i("TEST PREF", String.valueOf(prefTimeFormat));
 
             getContentResolver().notifyChange(TimeZoneContract.TimeZonesEntry.CONTENT_URI, null);
         }
