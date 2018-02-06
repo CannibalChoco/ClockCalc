@@ -7,6 +7,7 @@ import com.example.android.clockcalc.MainActivity;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
 import java.util.TimeZone;
 
 /**
@@ -52,15 +53,12 @@ public class TimeZoneUtils {
         switch (format){
             case ClockCalcPreferences.PREFS_TIME_FORMAT_12_H:
                 sdf= new SimpleDateFormat(TIME_FORMAT_12_H);
-                Log.i("TEST PREFS", String.valueOf(TIME_FORMAT_12_H));
                 break;
             case ClockCalcPreferences.PREFS_TIME_FORMAT_24_H:
                 sdf = new SimpleDateFormat(TIME_FORMAT_24_H);
-                Log.i("TEST PREFS", String.valueOf(TIME_FORMAT_24_H));
                 break;
             default:
                 sdf = new SimpleDateFormat(TIME_FORMAT_24_H);
-                Log.i("TEST PREFS", String.valueOf(TIME_FORMAT_24_H));
                 break;
         }
 

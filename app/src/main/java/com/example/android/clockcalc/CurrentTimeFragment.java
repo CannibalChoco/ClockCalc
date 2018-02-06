@@ -1,5 +1,7 @@
 package com.example.android.clockcalc;
 
+import android.text.format.DateFormat;
+import android.content.SharedPreferences;
 import android.support.v4.app.LoaderManager;
 import android.content.ContentValues;
 import android.support.v4.content.CursorLoader;
@@ -12,12 +14,14 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextClock;
 import android.widget.TextView;
 
+import com.example.android.clockcalc.Data.ClockCalcPreferences;
 import com.example.android.clockcalc.Data.TimeZoneContract;
 import com.example.android.clockcalc.Utils.TimeZoneUtils;
 
@@ -28,6 +32,7 @@ import java.util.TimeZone;
 // TODO: make it work if system time format set to 24h
 public class CurrentTimeFragment extends Fragment implements
         TimeZonePickerFragment.DialogTimeZoneListener,
+        SharedPreferences.OnSharedPreferenceChangeListener,
         LoaderManager.LoaderCallbacks<Cursor>{
 
     private static final String TAG = "CurrentTimeFragment";
@@ -46,6 +51,8 @@ public class CurrentTimeFragment extends Fragment implements
 
     RecyclerView recyclerView;
 
+    SharedPreferences settings;
+
         public CurrentTimeFragment(){}
 
     @Nullable
@@ -58,6 +65,9 @@ public class CurrentTimeFragment extends Fragment implements
         sourceTimeZoneIdTv = rootView.findViewById(R.id.sourceTimeZoneId);
         sourceTime = rootView.findViewById(R.id.sourceTime);
         fab = rootView.findViewById(R.id.fab);
+
+        settings = getActivity().getSharedPreferences(ClockCalcPreferences.PREFS_CLOCK_CALC, 0);
+        settings.registerOnSharedPreferenceChangeListener(this);
 
         recyclerView = rootView.findViewById(R.id.recyclerViewCurrent);
         recyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
@@ -79,6 +89,12 @@ public class CurrentTimeFragment extends Fragment implements
         getLoaderManager().initLoader(DB_LOADER, null, this);
 
         return rootView;
+    }
+
+    @Override
+    public void onStop() {
+        settings.unregisterOnSharedPreferenceChangeListener(this);
+        super.onStop();
     }
 
     @Override
@@ -146,6 +162,12 @@ public class CurrentTimeFragment extends Fragment implements
         sourceDateTv.setText(TimeZoneUtils.getCurrentDate(mSourceTimeZone));
         sourceTime.setTimeZone(id);
 
+        if (MainActivity.prefTimeFormat == ClockCalcPreferences.PREFS_TIME_FORMAT_12_H){
+            sourceTime.setFormat12Hour(TimeZoneUtils.TIME_FORMAT_12_H);
+        } else {
+            sourceTime.setFormat12Hour(TimeZoneUtils.TIME_FORMAT_24_H);
+        }
+
         sourceTimeZoneIdTv.setText(id);
         sourceDisplayNameTv.setText(displayName);
     }
@@ -158,5 +180,27 @@ public class CurrentTimeFragment extends Fragment implements
         timeZonePicker.setArguments(bundle);
         timeZonePicker.show(getActivity().getSupportFragmentManager(), "timeZonePicker");
         timeZonePicker.setTimeZoneListener(this);
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
+        Log.i("TEST PREF", "current time fragment");
+        // TODO: why 12h format works, 24h format doesn't?
+//        if (android.text.format.DateFormat.is24HourFormat(getContext())){
+//            if (MainActivity.prefTimeFormat == ClockCalcPreferences.PREFS_TIME_FORMAT_12_H){
+//                sourceTime.setFormat24Hour(TimeZoneUtils.TIME_FORMAT_12_H);
+//            } else {
+//                sourceTime.setFormat24Hour(TimeZoneUtils.TIME_FORMAT_24_H);
+//            }
+//        } else {
+//
+//        }
+
+        if (MainActivity.prefTimeFormat == ClockCalcPreferences.PREFS_TIME_FORMAT_12_H){
+            sourceTime.setFormat12Hour(TimeZoneUtils.TIME_FORMAT_12_H);
+        } else {
+            sourceTime.setFormat12Hour(TimeZoneUtils.TIME_FORMAT_24_H);
+        }
+
     }
 }

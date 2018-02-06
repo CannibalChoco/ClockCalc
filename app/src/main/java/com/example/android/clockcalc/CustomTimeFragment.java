@@ -28,6 +28,7 @@ import java.util.TimeZone;
 public class CustomTimeFragment extends Fragment implements
         TimeZonePickerFragment.DialogTimeZoneListener,
         TimePickerFragment.DialogTimeListener,
+        SharedPreferences.OnSharedPreferenceChangeListener,
         LoaderManager.LoaderCallbacks<Cursor>{
 
     // shared settings
@@ -77,6 +78,7 @@ public class CustomTimeFragment extends Fragment implements
         timeInMilis = settings.getLong(ClockCalcPreferences.PREFS_TIME_IN_MILIS, System.currentTimeMillis());
         sourceTimeZoneId = settings.getString(ClockCalcPreferences.PREFS_TIME_ZONE_ID, TimeZone.getDefault().getID());
         sourceTimeZone = TimeZone.getTimeZone(sourceTimeZoneId);
+        settings.registerOnSharedPreferenceChangeListener(this);
 
         // set up source time zone calendar object
         sourceCalendar = Calendar.getInstance(sourceTimeZone);
@@ -94,6 +96,8 @@ public class CustomTimeFragment extends Fragment implements
         getLoaderManager().initLoader(DB_LOADER, null, this);
         setClickListeners();
 
+
+
         return rootView;
     }
 
@@ -106,6 +110,8 @@ public class CustomTimeFragment extends Fragment implements
 
         editor.apply();
         editor.commit();
+
+        settings.unregisterOnSharedPreferenceChangeListener(this);
 
         super.onStop();
     }
@@ -257,5 +263,10 @@ public class CustomTimeFragment extends Fragment implements
                 showTimeZonePickerDialog(view, true);
             }
         });
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
+        sourceTime.setText(TimeZoneUtils.getFormattedTime(sourceTimeZone, timeInMilis));
     }
 }
