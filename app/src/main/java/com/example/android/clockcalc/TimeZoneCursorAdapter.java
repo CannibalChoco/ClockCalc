@@ -132,10 +132,19 @@ public class TimeZoneCursorAdapter extends RecyclerView.Adapter<TimeZoneCursorAd
         switch (viewType) {
             case (TimeZoneContract.TimeZonesEntry.DIFF_CURRENT):
                 holder.clockTc.setTimeZone(id);
-                if (MainActivity.prefTimeFormat == ClockCalcPreferences.PREFS_TIME_FORMAT_12_H){
-                    holder.clockTc.setFormat12Hour(TimeZoneUtils.TIME_FORMAT_12_H);
+
+                if (android.text.format.DateFormat.is24HourFormat(context)){
+                    if (MainActivity.prefTimeFormat == ClockCalcPreferences.PREFS_TIME_FORMAT_12_H){
+                        holder.clockTc.setFormat24Hour(TimeZoneUtils.TIME_FORMAT_12_H);
+                    } else {
+                        holder.clockTc.setFormat24Hour(TimeZoneUtils.TIME_FORMAT_24_H);
+                    }
                 } else {
-                    holder.clockTc.setFormat12Hour(TimeZoneUtils.TIME_FORMAT_24_H);
+                    if (MainActivity.prefTimeFormat == ClockCalcPreferences.PREFS_TIME_FORMAT_12_H){
+                        holder.clockTc.setFormat12Hour(TimeZoneUtils.TIME_FORMAT_12_H);
+                    } else {
+                        holder.clockTc.setFormat12Hour(TimeZoneUtils.TIME_FORMAT_12_H);
+                    }
                 }
                 break;
             case (TimeZoneContract.TimeZonesEntry.DIFF_CUSTOM):

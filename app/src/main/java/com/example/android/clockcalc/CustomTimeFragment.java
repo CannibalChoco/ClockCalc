@@ -103,6 +103,12 @@ public class CustomTimeFragment extends Fragment implements
 
 
     @Override
+    public void onStart() {
+        super.onStart();
+        settings.registerOnSharedPreferenceChangeListener(this);
+    }
+
+    @Override
     public void onStop() {
         SharedPreferences.Editor editor = settings.edit();
         editor.putLong(ClockCalcPreferences.PREFS_TIME_IN_MILIS, timeInMilis);
