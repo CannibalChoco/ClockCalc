@@ -10,7 +10,7 @@ import android.support.v4.app.FragmentPagerAdapter;
 
 public class SimpleFragmentPagerAdapter extends FragmentPagerAdapter {
 
-    public SimpleFragmentPagerAdapter(FragmentManager fm) {
+    SimpleFragmentPagerAdapter(FragmentManager fm) {
         super(fm);
     }
 
@@ -18,9 +18,9 @@ public class SimpleFragmentPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         switch (position){
             case 0:
-                return new CurrentTimeFragment();
-            case 1:
                 return new CustomTimeFragment();
+            case 1:
+                return new CurrentTimeFragment();
             default:
                 return null;
         }
@@ -30,9 +30,9 @@ public class SimpleFragmentPagerAdapter extends FragmentPagerAdapter {
     public CharSequence getPageTitle(int position) {
         switch(position) {
             case 0:
-                return "current";
+                return "Set time";
             case 1:
-                return "custom";
+                return "Current time";
             default:
                 return null;
         }

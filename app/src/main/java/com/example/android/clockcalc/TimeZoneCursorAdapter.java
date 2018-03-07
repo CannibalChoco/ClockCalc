@@ -148,7 +148,7 @@ public class TimeZoneCursorAdapter extends RecyclerView.Adapter<TimeZoneCursorAd
                 }
                 break;
             case (TimeZoneContract.TimeZonesEntry.DIFF_CUSTOM):
-                String time = TimeZoneUtils.getFormattedTime(tz, this.time);
+                String time = TimeZoneUtils.getFormattedCustomTime(tz, this.time);
                 holder.clockTv.setText(time);
                 break;
             default:

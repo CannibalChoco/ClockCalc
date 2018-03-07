@@ -1,5 +1,7 @@
 package com.example.android.clockcalc.Utils;
 
+import android.content.Context;
+import android.text.format.DateUtils;
 import android.util.Log;
 
 import com.example.android.clockcalc.Data.ClockCalcPreferences;
@@ -37,7 +39,7 @@ public class TimeZoneUtils {
      * @return formatted date String
      */
     public static String getCurrentDate (TimeZone timeZone){
-        SimpleDateFormat sdf = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
+        SimpleDateFormat sdf = new SimpleDateFormat();
         sdf.setTimeZone(timeZone);
         Calendar c = Calendar.getInstance(timeZone);
         String formatted = sdf.format(c.getTime());
@@ -45,12 +47,12 @@ public class TimeZoneUtils {
         return formatted;
     }
 
-    public static String getFormattedTime(TimeZone timeZone,
+    public static String getFormattedCustomTime(TimeZone timeZone,
                                           long time){
         SimpleDateFormat sdf;
-        int format = MainActivity.prefTimeFormat;
+        int prefTimeFormat = MainActivity.prefTimeFormat;
 
-        switch (format){
+        switch (prefTimeFormat){
             case ClockCalcPreferences.PREFS_TIME_FORMAT_12_H:
                 sdf= new SimpleDateFormat(TIME_FORMAT_12_H);
                 break;
@@ -70,5 +72,37 @@ public class TimeZoneUtils {
         String formatted = sdf.format(c.getTime());
 
         return formatted;
+    }
+
+    public static String getFormattedLocalTime(TimeZone timeZone,
+                                          long time, Context context){
+//        SimpleDateFormat sdf;
+//        int prefTimeFormat = MainActivity.prefTimeFormat;
+//
+//        switch (prefTimeFormat){
+//            case ClockCalcPreferences.PREFS_TIME_FORMAT_12_H:
+//                sdf= new SimpleDateFormat(TIME_FORMAT_12_H);
+//                break;
+//            case ClockCalcPreferences.PREFS_TIME_FORMAT_24_H:
+//                sdf = new SimpleDateFormat(TIME_FORMAT_24_H);
+//                break;
+//            default:
+//                sdf = new SimpleDateFormat(TIME_FORMAT_24_H);
+//                break;
+//        }
+//
+//        sdf.setTimeZone(timeZone);
+//
+//        Calendar c = Calendar.getInstance(timeZone);
+//        c.setTimeInMillis(time);
+//
+//        String formatted = sdf.format(c.getTime());
+//
+//        return formatted;
+
+        Calendar c = Calendar.getInstance(timeZone);
+        c.setTimeInMillis(time);
+
+        return DateUtils.formatDateTime(context, c.getTimeInMillis(), DateUtils.FORMAT_SHOW_TIME);
     }
 }

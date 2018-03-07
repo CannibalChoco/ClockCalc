@@ -27,9 +27,6 @@ import com.example.android.clockcalc.Utils.TimeZoneUtils;
 
 import java.util.TimeZone;
 
-
-// TODO: update time format when user changes preferences
-// TODO: make it work if system time format set to 24h
 public class CurrentTimeFragment extends Fragment implements
         TimeZonePickerFragment.DialogTimeZoneListener,
         SharedPreferences.OnSharedPreferenceChangeListener,
@@ -59,6 +56,8 @@ public class CurrentTimeFragment extends Fragment implements
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_current, container, false);
+
+
 
         sourceDateTv = rootView.findViewById(R.id.sourceDate);
         sourceDisplayNameTv = rootView.findViewById(R.id.sourceDisplayName);
@@ -191,7 +190,6 @@ public class CurrentTimeFragment extends Fragment implements
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
         Log.i("TEST PREF", "current time fragment");
-        // TODO: why 12h format works, 24h format doesn't?
         if (android.text.format.DateFormat.is24HourFormat(getContext())){
             if (MainActivity.prefTimeFormat == ClockCalcPreferences.PREFS_TIME_FORMAT_12_H){
                 sourceTime.setFormat24Hour(TimeZoneUtils.TIME_FORMAT_12_H);

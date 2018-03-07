@@ -24,7 +24,6 @@ import com.example.android.clockcalc.Utils.TimeZoneUtils;
 import java.util.Calendar;
 import java.util.TimeZone;
 
-// TODO: update time format when user changes preferences
 public class CustomTimeFragment extends Fragment implements
         TimeZonePickerFragment.DialogTimeZoneListener,
         TimePickerFragment.DialogTimeListener,
@@ -84,7 +83,7 @@ public class CustomTimeFragment extends Fragment implements
         sourceCalendar = Calendar.getInstance(sourceTimeZone);
         sourceCalendar.setTimeInMillis(timeInMilis);
 
-        sourceTimeString = TimeZoneUtils.getFormattedTime(sourceTimeZone, timeInMilis);
+        sourceTimeString = TimeZoneUtils.getFormattedCustomTime(sourceTimeZone, timeInMilis);
 
         cursorAdapter = new TimeZoneCursorAdapter(getActivity(), TimeZoneContract.TimeZonesEntry.DIFF_CUSTOM, timeInMilis);
         recyclerView.setAdapter(cursorAdapter);
@@ -169,7 +168,7 @@ public class CustomTimeFragment extends Fragment implements
         timeInMilis = time;
         sourceCalendar.setTimeInMillis(time);
 
-        sourceTimeString = TimeZoneUtils.getFormattedTime(sourceTimeZone, time);
+        sourceTimeString = TimeZoneUtils.getFormattedCustomTime(sourceTimeZone, time);
 
         sourceTime.setText(sourceTimeString);
 
@@ -203,7 +202,7 @@ public class CustomTimeFragment extends Fragment implements
         String displayName = sourceTimeZone.getDisplayName(false, TimeZone.SHORT);
         sourceDateTv.setText(TimeZoneUtils.getCurrentDate(sourceTimeZone));
 
-        sourceTime.setText(TimeZoneUtils.getFormattedTime(sourceTimeZone, timeInMilis));
+        sourceTime.setText(TimeZoneUtils.getFormattedCustomTime(sourceTimeZone, timeInMilis));
 
         sourceTimeZoneIdTv.setText(sourceTimeZoneId);
         sourceDisplayNameTv.setText(displayName);
@@ -273,6 +272,6 @@ public class CustomTimeFragment extends Fragment implements
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
-        sourceTime.setText(TimeZoneUtils.getFormattedTime(sourceTimeZone, timeInMilis));
+        sourceTime.setText(TimeZoneUtils.getFormattedCustomTime(sourceTimeZone, timeInMilis));
     }
 }
