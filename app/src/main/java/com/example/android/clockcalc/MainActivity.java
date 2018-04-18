@@ -13,8 +13,6 @@ import com.example.android.clockcalc.Data.ClockCalcPreferences;
 import com.example.android.clockcalc.Data.TimeZoneContract;
 
 
-// add a comment on testBranch to merge later in master
-
 public class MainActivity extends AppCompatActivity{
 
     private SharedPreferences settings;

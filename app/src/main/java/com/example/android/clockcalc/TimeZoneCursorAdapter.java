@@ -17,10 +17,6 @@ import com.example.android.clockcalc.Utils.TimeZoneUtils;
 
 import java.util.TimeZone;
 
-/**
- * Created by Emils on 16.01.2018.
- */
-
 public class TimeZoneCursorAdapter extends RecyclerView.Adapter<TimeZoneCursorAdapter.TimeZoneViewHolder> {
 
     private Cursor cursor;

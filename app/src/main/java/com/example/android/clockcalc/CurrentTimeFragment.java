@@ -1,6 +1,5 @@
 package com.example.android.clockcalc;
 
-import android.text.format.DateFormat;
 import android.content.SharedPreferences;
 import android.support.v4.app.LoaderManager;
 import android.content.ContentValues;
@@ -123,6 +122,7 @@ public class CurrentTimeFragment extends Fragment implements
         String selection = TimeZoneContract.TimeZonesEntry.COLUMN_TIME_DIFF + "=?";
 
         String[] selectionArgs = {"" + TimeZoneContract.TimeZonesEntry.DIFF_CURRENT};
+
 
         return new CursorLoader(getContext(), TimeZoneContract.TimeZonesEntry.CONTENT_URI,
                 projection,

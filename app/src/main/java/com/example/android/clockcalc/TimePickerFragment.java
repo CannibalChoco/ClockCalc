@@ -5,16 +5,11 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.app.TimePickerDialog;
 import android.text.format.DateFormat;
-import android.util.Log;
 import android.widget.TimePicker;
 
 import java.util.Calendar;
-import java.util.Locale;
 import java.util.TimeZone;
 
-/**
- * Created by Emils on 15.12.2017.
- */
 
 public class TimePickerFragment extends DialogFragment
         implements TimePickerDialog.OnTimeSetListener {

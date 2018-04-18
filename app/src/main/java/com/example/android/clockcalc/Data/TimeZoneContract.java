@@ -4,9 +4,6 @@ import android.content.ContentResolver;
 import android.net.Uri;
 import android.provider.BaseColumns;
 
-/**
- * Created by Emils on 15.01.2018.
- */
 
 public class TimeZoneContract {
 
