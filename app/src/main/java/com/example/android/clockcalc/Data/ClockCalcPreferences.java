@@ -1,8 +1,5 @@
 package com.example.android.clockcalc.Data;
 
-/**
- * Created by Emils on 02.02.2018.
- */
 
 public class ClockCalcPreferences {
 

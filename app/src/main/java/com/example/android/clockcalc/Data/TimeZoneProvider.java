@@ -11,10 +11,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-/**
- * Created by Emils on 15.01.2018.
- */
-
 public class TimeZoneProvider extends ContentProvider {
 
     private TimeZoneDbHelper dbHelper;
@@ -42,8 +38,10 @@ public class TimeZoneProvider extends ContentProvider {
      * Static initializer. This is run the first time anything is called from this class.
      */
     static {
-        sUriMatcher.addURI(TimeZoneContract.CONTENT_AUTHORITY, TimeZoneContract.PATH_TABLE_TIME_ZONES, TIMEZONES); // 100
-        sUriMatcher.addURI(TimeZoneContract.CONTENT_AUTHORITY, TimeZoneContract.PATH_TABLE_TIME_ZONES + "/#", ID_TIMEZONE); // 101
+        sUriMatcher.addURI(TimeZoneContract.CONTENT_AUTHORITY,
+                TimeZoneContract.PATH_TABLE_TIME_ZONES, TIMEZONES); // 100
+        sUriMatcher.addURI(TimeZoneContract.CONTENT_AUTHORITY,
+                TimeZoneContract.PATH_TABLE_TIME_ZONES + "/#", ID_TIMEZONE); // 101
     }
 
     @Override
@@ -78,8 +76,13 @@ public class TimeZoneProvider extends ContentProvider {
                  selection = TimeZoneContract.TimeZonesEntry._ID + "=?";
                  selectionArgs = new String[] {String.valueOf(ContentUris.parseId(uri))};
 
-                cursor = db.query(TimeZoneContract.TimeZonesEntry.TABLE_NAME, projection, selection, selectionArgs,
-                        null, null, sortOrder);
+                cursor = db.query(TimeZoneContract.TimeZonesEntry.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder);
                 break;
             default:
                 throw new IllegalArgumentException("Cannot query unknown URI " + uri);

@@ -11,10 +11,6 @@ import android.view.ViewGroup;
 
 import java.util.TimeZone;
 
-/**
- * Created by Emils on 22.12.2017.
- */
-
 public class TimeZonePickerFragment extends DialogFragment implements TimeZoneAdapter.TimeZoneAdapterOnClickHandler{
 
     RecyclerView recyclerView;

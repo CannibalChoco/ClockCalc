@@ -8,10 +8,6 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 
-/**
- * Created by Emils on 22.12.2017.
- */
-
 public class TimeZoneAdapter extends RecyclerView.Adapter<TimeZoneAdapter.TimeZoneViewHolder>{
 
     private String[] mTimeZones;

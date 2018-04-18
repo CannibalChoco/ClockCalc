@@ -2,19 +2,13 @@ package com.example.android.clockcalc.Utils;
 
 import android.content.Context;
 import android.text.format.DateUtils;
-import android.util.Log;
 
 import com.example.android.clockcalc.Data.ClockCalcPreferences;
 import com.example.android.clockcalc.MainActivity;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Locale;
 import java.util.TimeZone;
-
-/**
- * Created by Emils on 10.01.2018.
- */
 
 /**
  * Time zone info returned by the TimeZone class is as follows:
@@ -39,7 +33,7 @@ public class TimeZoneUtils {
      * @return formatted date String
      */
     public static String getCurrentDate (TimeZone timeZone){
-        SimpleDateFormat sdf = new SimpleDateFormat();
+        SimpleDateFormat sdf = new SimpleDateFormat(DEFAULT_DATE_FORMAT);
         sdf.setTimeZone(timeZone);
         Calendar c = Calendar.getInstance(timeZone);
         String formatted = sdf.format(c.getTime());
