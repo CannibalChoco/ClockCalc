@@ -8,10 +8,13 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 
 public class TimeZoneAdapter extends RecyclerView.Adapter<TimeZoneAdapter.TimeZoneViewHolder>{
+
+    // TODO: hold the original time zone data          ----->  originalData
+    // TODO: initially set displayed data to original  ----->  displayedData
+    // TODO: when search occurs, display matches       ----->  matchedData
 
     private ArrayList<String> mTimeZones;
 
@@ -24,8 +27,8 @@ public class TimeZoneAdapter extends RecyclerView.Adapter<TimeZoneAdapter.TimeZo
         void onClick(String timeZone);
     }
 
-    public TimeZoneAdapter(String[] timeZones, TimeZoneAdapterOnClickHandler handler){
-        mTimeZones = new ArrayList(Arrays.asList(timeZones));
+    public TimeZoneAdapter(ArrayList<String> timeZones, TimeZoneAdapterOnClickHandler handler){
+        mTimeZones = timeZones;
         mClickHandler = handler;
     }
 
@@ -70,5 +73,23 @@ public class TimeZoneAdapter extends RecyclerView.Adapter<TimeZoneAdapter.TimeZo
     @Override
     public int getItemCount() {
         return mTimeZones.size();
+    }
+
+    public void swapData (ArrayList<String> data){
+        mTimeZones.clear();
+        this.mTimeZones = data;
+        notifyDataSetChanged();
+    }
+
+    public void getSearchResults(String search) {
+        ArrayList<String> matches = new ArrayList<>();
+
+        for (String string : mTimeZones){
+            if (string.toLowerCase().contains(search.toLowerCase())){
+                matches.add(string);
+            }
+        }
+
+        swapData(matches);
     }
 }

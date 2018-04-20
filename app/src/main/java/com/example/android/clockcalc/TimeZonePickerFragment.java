@@ -6,10 +6,13 @@ import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.TimeZone;
 
 public class TimeZonePickerFragment extends DialogFragment implements
@@ -18,6 +21,7 @@ public class TimeZonePickerFragment extends DialogFragment implements
     RecyclerView recyclerView;
     SearchView searchView;
     TimeZoneAdapter adapter;
+    ArrayList<String> dataSet;
 
     public static final String IS_SOURCE = "isSource";
     boolean isSource;
@@ -44,7 +48,9 @@ public class TimeZonePickerFragment extends DialogFragment implements
         recyclerView = rootView.findViewById(R.id.recyclerViewTimeZonePicker);
         recyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
 
-        adapter = new TimeZoneAdapter(TimeZone.getAvailableIDs(), this);
+        dataSet = new ArrayList<>(Arrays.asList(TimeZone.getAvailableIDs())) ;
+
+        adapter = new TimeZoneAdapter(dataSet, this);
         recyclerView.setAdapter(adapter);
 
         this.getDialog();
@@ -56,12 +62,16 @@ public class TimeZonePickerFragment extends DialogFragment implements
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                return false;
+                adapter.getSearchResults(query);
+
+                return true;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                return false;
+                adapter.getSearchResults(newText);
+
+                return true;
             }
         });
 
