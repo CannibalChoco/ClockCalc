@@ -62,14 +62,12 @@ public class TimeZonePickerFragment extends DialogFragment implements
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String query) {
-                adapter.getSearchResults(query);
-
-                return true;
+                return false;
             }
 
             @Override
             public boolean onQueryTextChange(String newText) {
-                adapter.getSearchResults(newText);
+                adapter.displaySearchResults(newText);
 
                 return true;
             }

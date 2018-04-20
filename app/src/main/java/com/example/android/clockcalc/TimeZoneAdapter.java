@@ -12,11 +12,8 @@ import java.util.ArrayList;
 
 public class TimeZoneAdapter extends RecyclerView.Adapter<TimeZoneAdapter.TimeZoneViewHolder>{
 
-    // TODO: hold the original time zone data          ----->  originalData
-    // TODO: initially set displayed data to original  ----->  displayedData
-    // TODO: when search occurs, display matches       ----->  matchedData
-
-    private ArrayList<String> mTimeZones;
+    private ArrayList<String> originalData;
+    private ArrayList<String> displayedData;
 
     final private TimeZoneAdapterOnClickHandler mClickHandler;
 
@@ -28,7 +25,8 @@ public class TimeZoneAdapter extends RecyclerView.Adapter<TimeZoneAdapter.TimeZo
     }
 
     public TimeZoneAdapter(ArrayList<String> timeZones, TimeZoneAdapterOnClickHandler handler){
-        mTimeZones = timeZones;
+        originalData = timeZones;
+        displayedData = new ArrayList<>(timeZones);
         mClickHandler = handler;
     }
 
@@ -47,7 +45,7 @@ public class TimeZoneAdapter extends RecyclerView.Adapter<TimeZoneAdapter.TimeZo
         public void onClick (View v){
             int position = getAdapterPosition();
 
-            String selectedTimeZone = mTimeZones.get(position);
+            String selectedTimeZone = displayedData.get(position);
             mClickHandler.onClick(selectedTimeZone);
         }
     }
@@ -66,25 +64,25 @@ public class TimeZoneAdapter extends RecyclerView.Adapter<TimeZoneAdapter.TimeZo
 
     @Override
     public void onBindViewHolder(TimeZoneViewHolder holder, int position) {
-        holder.timeZone.setText(mTimeZones.get(position));
+        holder.timeZone.setText(displayedData.get(position));
         holder.timeZone.setTextSize(12);
     }
 
     @Override
     public int getItemCount() {
-        return mTimeZones.size();
+        return displayedData.size();
     }
 
     public void swapData (ArrayList<String> data){
-        mTimeZones.clear();
-        this.mTimeZones = data;
+        displayedData.clear();
+        this.displayedData = data;
         notifyDataSetChanged();
     }
 
-    public void getSearchResults(String search) {
+    public void displaySearchResults(String search) {
         ArrayList<String> matches = new ArrayList<>();
 
-        for (String string : mTimeZones){
+        for (String string : originalData){
             if (string.toLowerCase().contains(search.toLowerCase())){
                 matches.add(string);
             }
