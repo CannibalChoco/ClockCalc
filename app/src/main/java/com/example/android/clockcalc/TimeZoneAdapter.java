@@ -7,10 +7,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 
 public class TimeZoneAdapter extends RecyclerView.Adapter<TimeZoneAdapter.TimeZoneViewHolder>{
 
-    private String[] mTimeZones;
+    private ArrayList<String> mTimeZones;
 
     final private TimeZoneAdapterOnClickHandler mClickHandler;
 
@@ -22,7 +25,7 @@ public class TimeZoneAdapter extends RecyclerView.Adapter<TimeZoneAdapter.TimeZo
     }
 
     public TimeZoneAdapter(String[] timeZones, TimeZoneAdapterOnClickHandler handler){
-        mTimeZones = timeZones;
+        mTimeZones = new ArrayList(Arrays.asList(timeZones));
         mClickHandler = handler;
     }
 
@@ -41,7 +44,7 @@ public class TimeZoneAdapter extends RecyclerView.Adapter<TimeZoneAdapter.TimeZo
         public void onClick (View v){
             int position = getAdapterPosition();
 
-            String selectedTimeZone = mTimeZones[position];
+            String selectedTimeZone = mTimeZones.get(position);
             mClickHandler.onClick(selectedTimeZone);
         }
     }
@@ -60,12 +63,12 @@ public class TimeZoneAdapter extends RecyclerView.Adapter<TimeZoneAdapter.TimeZo
 
     @Override
     public void onBindViewHolder(TimeZoneViewHolder holder, int position) {
-        holder.timeZone.setText(mTimeZones[position]);
+        holder.timeZone.setText(mTimeZones.get(position));
         holder.timeZone.setTextSize(12);
     }
 
     @Override
     public int getItemCount() {
-        return mTimeZones.length;
+        return mTimeZones.size();
     }
 }
