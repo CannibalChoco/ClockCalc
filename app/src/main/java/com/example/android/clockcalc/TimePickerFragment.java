@@ -7,6 +7,8 @@ import android.app.TimePickerDialog;
 import android.text.format.DateFormat;
 import android.widget.TimePicker;
 
+import com.example.android.clockcalc.Data.ClockCalcPreferences;
+
 import java.util.Calendar;
 import java.util.TimeZone;
 
@@ -37,6 +39,8 @@ public class TimePickerFragment extends DialogFragment
 
         Bundle bundle = getArguments();
         timeZoneId = bundle.getString(TIME_ZONE_ID);
+        int prefTImeFormat = bundle.getInt("PREF_TIME_FORMAT");
+        boolean is24hourFormat = (prefTImeFormat == ClockCalcPreferences.PREFS_TIME_FORMAT_24_H);
 
         // Use the current time as the default values for the picker
         final Calendar c = Calendar.getInstance();
@@ -44,8 +48,7 @@ public class TimePickerFragment extends DialogFragment
         int minute = c.get(Calendar.MINUTE);
 
         // Create a new instance of TimePickerDialog and return it
-        return new TimePickerDialog(getActivity(), this, hour, minute,
-                DateFormat.is24HourFormat(getActivity()));
+        return new TimePickerDialog(getActivity(), this, hour, minute, is24hourFormat);
     }
 
     @Override

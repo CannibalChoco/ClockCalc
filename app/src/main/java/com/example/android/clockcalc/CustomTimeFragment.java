@@ -221,6 +221,7 @@ public class CustomTimeFragment extends Fragment implements
     private void showTimePickerDialog(View v){
         Bundle bundle = new Bundle();
         bundle.putString(TimePickerFragment.TIME_ZONE_ID, sourceTimeZoneId);
+        bundle.putInt("PREF_TIME_FORMAT", MainActivity.prefTimeFormat);
 
         TimePickerFragment timePicker = new TimePickerFragment();
         timePicker.setArguments(bundle);

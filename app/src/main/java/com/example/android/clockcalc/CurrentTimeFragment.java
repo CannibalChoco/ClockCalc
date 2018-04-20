@@ -189,7 +189,6 @@ public class CurrentTimeFragment extends Fragment implements
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String s) {
-        Log.i("TEST PREF", "current time fragment");
         if (android.text.format.DateFormat.is24HourFormat(getContext())){
             if (MainActivity.prefTimeFormat == ClockCalcPreferences.PREFS_TIME_FORMAT_12_H){
                 sourceTime.setFormat24Hour(TimeZoneUtils.TIME_FORMAT_12_H);
