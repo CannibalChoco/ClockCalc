@@ -6,7 +6,6 @@ import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -48,7 +47,7 @@ public class TimeZonePickerFragment extends DialogFragment implements
         recyclerView = rootView.findViewById(R.id.recyclerViewTimeZonePicker);
         recyclerView.setLayoutManager(new LinearLayoutManager(this.getActivity()));
 
-        dataSet = new ArrayList<>(Arrays.asList(TimeZone.getAvailableIDs())) ;
+        dataSet = getUserFriendlyData();
 
         adapter = new TimeZoneAdapter(dataSet, this);
         recyclerView.setAdapter(adapter);
@@ -80,5 +79,17 @@ public class TimeZonePickerFragment extends DialogFragment implements
     public void onClick(String selectedTimeZone) {
         listener.timeZoneSet(selectedTimeZone, isSource);
         dismiss();
+    }
+
+    private ArrayList<String> getUserFriendlyData(){
+        ArrayList<String> list = new ArrayList<>(Arrays.asList(TimeZone.getAvailableIDs()));
+        ArrayList<String> formattedList = new ArrayList<>();
+        for (String string : list){
+            String formatted = string.replace("/", ", ");
+            formatted = formatted.replace("_", " ");
+            formattedList.add(formatted);
+        }
+
+        return formattedList;
     }
 }

@@ -65,7 +65,6 @@ public class TimeZoneAdapter extends RecyclerView.Adapter<TimeZoneAdapter.TimeZo
     @Override
     public void onBindViewHolder(TimeZoneViewHolder holder, int position) {
         holder.timeZone.setText(displayedData.get(position));
-        holder.timeZone.setTextSize(12);
     }
 
     @Override
